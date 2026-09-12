@@ -154,7 +154,7 @@ export default function CommunityStats() {
 
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
             Lihat perkembangan dan dampak positif yang telah kita ciptakan
-            bersama dalam komunitas Sampedia!
+            bersama dalam komunitas Cisarua 3!
           </p>
         </div>
 

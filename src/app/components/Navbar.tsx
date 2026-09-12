@@ -9,12 +9,15 @@ import {
   Users,
   Phone,
   Home,
-  Brain,
+  LogIn,
+  ChevronDown,
 } from "lucide-react";
+import { daftarSiswa, type Siswa } from "@/lib/siswaData";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [siswaLogin, setSiswaLogin] = useState<Siswa | null>(null);
   const pathname = usePathname();
 
   // Theme colors based on route
@@ -45,15 +48,15 @@ export default function Navbar() {
       };
     } else if (pathname === "/quiz") {
       return {
-        primary: "purple",
-        gradient: "from-purple-500 to-purple-600",
-        gradientHover: "from-purple-600 to-purple-700",
-        text: "from-purple-600 to-purple-600",
-        bg: "bg-purple-100",
-        bgHover: "hover:bg-purple-50/80",
-        textHover: "hover:text-purple-600",
-        borderColor: "border-purple-100",
-        gradientOverlay: "from-purple-400 to-purple-500",
+        primary: "indigo",
+        gradient: "from-indigo-600 to-purple-600",
+        gradientHover: "from-indigo-700 to-purple-700",
+        text: "from-indigo-600 to-purple-600",
+        bg: "bg-indigo-100",
+        bgHover: "hover:bg-indigo-50/80",
+        textHover: "hover:text-indigo-600",
+        borderColor: "border-indigo-100",
+        gradientOverlay: "from-indigo-400 to-purple-500",
       };
     } else if (pathname === "/contact") {
       return {
@@ -83,6 +86,28 @@ export default function Navbar() {
   };
 
   const theme = getThemeColors();
+
+  // Baca session siswa dari sessionStorage
+  useEffect(() => {
+    const checkSession = () => {
+      const saved = sessionStorage.getItem("siswa_session");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as { id: number };
+          const found = daftarSiswa.find((s) => s.id === parsed.id) ?? null;
+          setSiswaLogin(found);
+        } catch {
+          setSiswaLogin(null);
+        }
+      } else {
+        setSiswaLogin(null);
+      }
+    };
+    checkSession();
+    // sessionStorage tidak memicu event 'storage', pakai custom event
+    window.addEventListener("sessionchange", checkSession);
+    return () => window.removeEventListener("sessionchange", checkSession);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -140,9 +165,9 @@ export default function Navbar() {
                   <Leaf className="w-5 h-5 text-white" />
                 </div>
                 <span
-                  className={`font-bold text-lg bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
+                  className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
                 >
-                  Sampedia
+                  Cisarua 3
                 </span>
               </div>
 
@@ -179,13 +204,31 @@ export default function Navbar() {
               {/* Separator */}
               <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-              {/* CTA Button */}
-              <a
-                href="/quiz"
-                className={`bg-gradient-to-r ${theme.gradient} text-white px-6 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:scale-105 transition-all duration-300 whitespace-nowrap`}
-              >
-                Coba Quiz
-              </a>
+              {/* CTA Button — Avatar jika login, Login Siswa jika belum */}
+              {siswaLogin ? (
+                <a
+                  href="/quiz"
+                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md px-3 py-1.5 rounded-full transition-all duration-300 group"
+                >
+                  {/* Avatar */}
+                  <div className={`w-7 h-7 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0`}>
+                    <span className="text-white font-extrabold text-[10px]">{siswaLogin.inisial}</span>
+                  </div>
+                  {/* Nama dipersingkat */}
+                  <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 max-w-[120px] truncate">
+                    {siswaLogin.nama.split(" ")[0]}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                </a>
+              ) : (
+                <a
+                  href="/quiz?from=nav"
+                  className={`bg-gradient-to-r ${theme.gradient} text-white px-5 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:scale-105 transition-all duration-300 whitespace-nowrap flex items-center gap-2`}
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login Siswa
+                </a>
+              )}
             </div>
 
             {/* Mobile Content */}
@@ -198,9 +241,9 @@ export default function Navbar() {
                   <Leaf className="w-5 h-5 text-white" />
                 </div>
                 <span
-                  className={`font-bold text-lg bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
+                  className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
                 >
-                  Sampedia
+                  Cisarua 3
                 </span>
               </div>
 
@@ -286,12 +329,30 @@ export default function Navbar() {
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-100">
-            <a
-              href="/quiz"
-              className={`w-full bg-gradient-to-r ${theme.gradient} text-white py-3 rounded-2xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 block text-center`}
-            >
-              Coba Quiz
-            </a>
+            {siswaLogin ? (
+              <a
+                href="/quiz"
+                onClick={() => setIsOpen(false)}
+                className="w-full flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-3 rounded-2xl transition-all duration-200"
+              >
+                <div className={`w-10 h-10 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0`}>
+                  <span className="text-white font-extrabold text-sm">{siswaLogin.inisial}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-slate-800 text-sm truncate">{siswaLogin.nama}</p>
+                  <p className="text-xs text-gray-500">Lihat profil saya</p>
+                </div>
+                <ChevronDown className="w-4 h-4 text-gray-400 -rotate-90" />
+              </a>
+            ) : (
+              <a
+                href="/quiz?from=nav"
+                className={`w-full bg-gradient-to-r ${theme.gradient} text-white py-3 rounded-2xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2`}
+              >
+                <LogIn className="w-4 h-4" />
+                Login Siswa
+              </a>
+            )}
           </div>
         </div>
       </div>

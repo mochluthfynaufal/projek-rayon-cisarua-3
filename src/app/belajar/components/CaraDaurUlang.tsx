@@ -240,18 +240,16 @@ export default function CaraDaurUlang() {
                 setActiveProcess(index);
                 resetProgress();
               }}
-              className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left ${
-                activeProcess === index
-                  ? `${process.borderColor} ${process.bgColor} scale-105 shadow-lg`
-                  : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
-              }`}
+              className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left ${activeProcess === index
+                ? `${process.borderColor} ${process.bgColor} scale-105 shadow-lg`
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
+                }`}
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">{process.emoji}</span>
                 <h3
-                  className={`font-bold text-lg ${
-                    activeProcess === index ? process.color : "text-gray-800"
-                  }`}
+                  className={`font-bold text-lg ${activeProcess === index ? process.color : "text-gray-800"
+                    }`}
                 >
                   {process.name}
                 </h3>
@@ -315,9 +313,8 @@ export default function CaraDaurUlang() {
                   "bg-"
                 )} transition-all duration-500`}
                 style={{
-                  width: `${
-                    (completedSteps.length / currentProcess.steps.length) * 100
-                  }%`,
+                  width: `${(completedSteps.length / currentProcess.steps.length) * 100
+                    }%`,
                 }}
               ></div>
             </div>
@@ -338,26 +335,24 @@ export default function CaraDaurUlang() {
                 <div
                   key={step.id}
                   onClick={() => handleStepClick(step.id)}
-                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
-                    isCompleted
-                      ? "border-green-300 bg-green-50 scale-102"
-                      : isActive
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${isCompleted
+                    ? "border-green-300 bg-green-50 scale-102"
+                    : isActive
                       ? `${currentProcess.borderColor} ${currentProcess.bgColor} shadow-md`
                       : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
-                        isCompleted
-                          ? "bg-green-500 text-white"
-                          : isActive
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${isCompleted
+                        ? "bg-green-500 text-white"
+                        : isActive
                           ? `${currentProcess.color.replace(
-                              "text-",
-                              "bg-"
-                            )} text-white`
+                            "text-",
+                            "bg-"
+                          )} text-white`
                           : "bg-gray-300 text-gray-600"
-                      }`}
+                        }`}
                     >
                       {isCompleted ? "✓" : index + 1}
                     </div>
@@ -366,9 +361,8 @@ export default function CaraDaurUlang() {
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xl">{step.icon}</span>
                         <h4
-                          className={`font-bold ${
-                            isCompleted ? "text-green-700" : "text-gray-800"
-                          }`}
+                          className={`font-bold ${isCompleted ? "text-green-700" : "text-gray-800"
+                            }`}
                         >
                           {step.title}
                         </h4>
@@ -377,9 +371,8 @@ export default function CaraDaurUlang() {
                         )}
                       </div>
                       <p
-                        className={`${
-                          isCompleted ? "text-green-600" : "text-gray-600"
-                        }`}
+                        className={`${isCompleted ? "text-green-600" : "text-gray-600"
+                          }`}
                       >
                         {step.description}
                       </p>

@@ -1,43 +1,44 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Users, Recycle, TreePine, Award, TrendingUp, Globe, Heart, Zap, Leaf } from "lucide-react"
+import { Users, ShieldCheck, Trophy, Heart, TrendingUp, Zap, CalendarDays, GraduationCap, CheckCircle2, MessageCircle } from "lucide-react"
+import { jumlahSiswaAktif } from "@/lib/siswaData"
 
 const statsData = [
   {
     icon: <Users className="w-8 h-8" />,
-    value: "10.000+",
-    label: "Orang Teredukasi",
-    description: "Masyarakat yang telah mengikuti program edukasi kami",
+    value: `${jumlahSiswaAktif}`,
+    label: "Siswa Aktif",
+    description: `Total ${jumlahSiswaAktif} anggota gabungan dari kelas 10, 11, dan 12 yang solid dan kompak.`,
     color: "emerald",
-    growth: "+15%",
-    detail: "Setiap bulan bertambah 800+ member baru",
+    growth: "Active",
+    detail: "Terdiri dari angkatan kelas 10, 11, dan 12 yang aktif berorganisasi.",
   },
   {
-    icon: <Recycle className="w-8 h-8" />,
-    value: "85%",
-    label: "Peningkatan Daur Ulang",
-    description: "Kenaikan partisipasi daur ulang di komunitas sasaran",
+    icon: <ShieldCheck className="w-8 h-8" />,
+    value: "98%",
+    label: "Tingkat Kedisiplinan",
+    description: "Persentase kedisiplinan dan kehadiran harian siswa Cisarua 3.",
     color: "blue",
-    growth: "+23%",
-    detail: "Dari 62% menjadi 85% dalam 6 bulan terakhir",
+    growth: "+5%",
+    detail: "Meningkat konsisten setiap semester berkat pembiasaan harian.",
   },
   {
-    icon: <TreePine className="w-8 h-8" />,
-    value: "500+",
-    label: "Pohon Tertanam",
-    description: "Sebagai bagian dari program rehabilitasi lingkungan",
+    icon: <Trophy className="w-8 h-8" />,
+    value: "12+",
+    label: "Prestasi & Juara",
+    description: "Perolehan penghargaan dari berbagai kompetisi akademik, seni, dan olahraga yang diraih anggota rayon.",
     color: "green",
-    growth: "+31%",
-    detail: "Target 1000 pohon pada akhir tahun",
+    growth: "Award",
+    detail: "Mencakup kompetisi tingkat sekolah, kota, hingga provinsi.",
   },
   {
-    icon: <Award className="w-8 h-8" />,
-    value: "12",
-    label: "Penghargaan",
-    description: "Atas inovasi dalam edukasi pengelolaan sampah",
+    icon: <Heart className="w-8 h-8" />,
+    value: "100%",
+    label: "Kekeluargaan",
+    description: "Komitmen saling merangkul dan membimbing dari senior ke junior.",
     color: "yellow",
-    growth: "+42%",
-    detail: "Termasuk penghargaan internasional",
+    growth: "Top",
+    detail: "Budaya saling support yang dibangun sejak awal terbentuknya rayon.",
   },
 ]
 
@@ -135,20 +136,19 @@ export default function EnhancedStats() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full mb-8 shadow-lg border border-gray-200">
             <TrendingUp className="w-5 h-5 text-emerald-600 animate-pulse" />
-            <span className="text-emerald-700 font-semibold text-sm">Our Impact</span>
+            <span className="text-emerald-700 font-semibold text-sm">Profil Rayon</span>
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
           </div>
 
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight">
-            Dampak Nyata dari{" "}
+            Mengenal Lebih Dekat{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-              Edukasi Sampah
+              Rayon Cisarua 3
             </span>
           </h1>
 
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
-            Angka-angka ini membuktikan bahwa edukasi yang tepat dapat menciptakan perubahan besar untuk lingkungan kita
-            bersama
+            Angka-angka yang mencerminkan semangat, kedisiplinan, dan kebersamaan seluruh anggota Rayon Cisarua 3
           </p>
 
           {/* Progress Indicator */}
@@ -208,9 +208,13 @@ export default function EnhancedStats() {
                         <div className="text-white">{stat.icon}</div>
                       </div>
 
-                      {/* Growth Badge */}
-                      <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
-                        <TrendingUp className="w-3 h-3" />
+                      {/* Badge */}
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm ${
+                        stat.color === 'emerald' ? 'bg-green-100 text-green-700' :
+                        stat.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                        stat.color === 'green' ? 'bg-lime-100 text-lime-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
                         {stat.growth}
                       </div>
                     </div>
@@ -265,7 +269,7 @@ export default function EnhancedStats() {
 
         {/* Enhanced Bottom Section */}
         <div className="mt-20 grid md:grid-cols-2 gap-8">
-          {/* Join Community CTA */}
+          {/* CTA Kolaborasi */}
           <div className="bg-gradient-to-br from-emerald-100 to-green-100 border border-emerald-200 rounded-3xl p-8 relative overflow-hidden">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
@@ -276,51 +280,46 @@ export default function EnhancedStats() {
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Users className="w-8 h-8 text-white" />
+                  <MessageCircle className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800">Bergabung Sekarang!</h3>
-                  <p className="text-emerald-600 font-medium">Gratis dan mudah</p>
+                  <h3 className="text-2xl font-bold text-gray-800">Punya Ide atau Ingin Kolaborasi?</h3>
                 </div>
               </div>
 
               <p className="text-gray-700 mb-6 leading-relaxed">
-                Jadilah bagian dari komunitas yang membuat perbedaan nyata. Dapatkan akses ke forum, challenge, dan
-                event eksklusif!
+                Ingin bikin acara bareng, kolaborasi antar-rayon, atau mau tanya-tanya seputar Rayon Cisarua 3? Pintu kami selalu terbuka!
               </p>
 
-              <button className="bg-emerald-500 text-white px-8 py-3 rounded-full font-medium hover:bg-emerald-600 transition-all duration-300 hover:scale-105 shadow-lg">
-                Daftar Sekarang
+              <button className="bg-emerald-500 text-white px-8 py-3 rounded-full font-medium hover:bg-emerald-600 transition-all duration-300 hover:scale-105 shadow-lg flex items-center gap-2">
+                Hubungi Pengurus →
               </button>
             </div>
           </div>
 
-          {/* Real-time Activity */}
+          {/* Status & Ringkasan Rayon */}
           <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-lg">
             <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <Zap className="w-6 h-6 text-blue-600" />
-              Aktivitas Real-time
+              <Zap className="w-6 h-6 text-yellow-500" />
+              Status & Ringkasan Rayon
             </h3>
 
             <div className="space-y-4">
               {[
                 {
-                  icon: <Globe className="w-5 h-5 text-blue-600" />,
-                  label: "Pengunjung Online",
-                  value: "1,247",
-                  trend: "+12%",
+                  icon: <GraduationCap className="w-5 h-5 text-emerald-600" />,
+                  label: "Angkatan Aktif",
+                  value: "3 Angkatan",
                 },
                 {
-                  icon: <Heart className="w-5 h-5 text-red-500" />,
-                  label: "Aksi Hari Ini",
-                  value: "89",
-                  trend: "+23%",
+                  icon: <CalendarDays className="w-5 h-5 text-blue-500" />,
+                  label: "Agenda Bulan Ini",
+                  value: "2 Kegiatan",
                 },
                 {
-                  icon: <Leaf className="w-5 h-5 text-green-600" />,
-                  label: "CO₂ Dikurangi",
-                  value: "156kg",
-                  trend: "+8%",
+                  icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
+                  label: "Status Pembiasaan",
+                  value: "100% Tuntas",
                 },
               ].map((item, i) => (
                 <div
@@ -333,10 +332,7 @@ export default function EnhancedStats() {
                     </div>
                     <span className="font-medium text-gray-800">{item.label}</span>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-gray-800">{item.value}</div>
-                    <div className="text-xs text-green-600 font-medium">{item.trend}</div>
-                  </div>
+                  <div className="font-bold text-gray-800">{item.value}</div>
                 </div>
               ))}
             </div>

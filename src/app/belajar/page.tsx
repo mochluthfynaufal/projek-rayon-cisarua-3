@@ -2,20 +2,17 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
-import JenisSampah from "./components/JenisSampah";
-import SortingSampahGame from "./components/SortingSampahGame";
-import CTA from "./components/CTA";
-import Fakta from "./components/Fakta";
-import Pendahuluan from "./components/Pendahuluan";
-import SolusiKreatif from "./components/SolusiKreatif";
-import WasteManagementGuide from "./components/WasteManagementGuide";
-import Slogan from "./components/Slogan";
-import LearningPath from "./components/LearningPath";
-import WasteCalculator from "./components/WasteCalculator";
-import EcoTimeline from "./components/EcoTimeline";
-import InteractiveMap from "./components/InteractiveMap";
+
+import ProfilWaliKelas   from "./components/ProfilWaliKelas";
+import StrukturKelas     from "./components/StrukturKelas";
+import DaftarSiswa       from "./components/DaftarSiswa";
+import JadwalPiket       from "./components/JadwalPiket";
+import GamePiket         from "./components/GamePiket";
 
 export default function BelajarPage() {
+  // ================================================================
+  // BAGIAN INI TIDAK DIUBAH — props Navbar & Hero tetap persis sama
+  // ================================================================
   const belajarHeroProps = {
     title: "Siap Buat Belajar?",
     rotatingTexts: [
@@ -43,23 +40,30 @@ export default function BelajarPage() {
       hoverBg: "hover:bg-yellow-50",
     },
   };
+  // ================================================================
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-tl from-yellow-100/20 via-yellow-100/10 to-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-white">
+      {/* ===================== JANGAN DIUBAH ===================== */}
       <Navbar />
       <Hero {...belajarHeroProps} />
-      <Pendahuluan />
-      <LearningPath />
-      <Fakta />
-      <EcoTimeline />
-      <Slogan />
-      <JenisSampah />
-      <WasteCalculator />
-      <SortingSampahGame />
-      <CTA />
-      <WasteManagementGuide />
-      <SolusiKreatif />
-      <InteractiveMap />
+      {/* ========================================================= */}
+
+      {/* Profil Wali Kelas */}
+      <ProfilWaliKelas />
+
+      {/* Struktur Pengurus Kelas */}
+      <StrukturKelas />
+
+      {/* Daftar Siswa — 3 Angkatan */}
+      <DaftarSiswa />
+
+      {/* Jadwal Piket */}
+      <JadwalPiket />
+
+      {/* Game Piket */}
+      <GamePiket />
+
       <Footer />
     </div>
   );

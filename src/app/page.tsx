@@ -4,10 +4,10 @@ import Hero from "./components/Hero";
 import LatarBelakang from "./components/LatarBelakang";
 import Support from "./components/SupportBy";
 import EnhancedStats from "./components/EnhancedStats";
-import Testimonials from "./components/Testimonials";
-import CTA from "./components/CTA";
+
+
 import Footer from "./components/Footer";
-import CTABelajar from "./components/CTABelajar";
+
 
 export default function Home() {
   const homeHeroProps = {
@@ -45,10 +45,10 @@ export default function Home() {
       <Hero {...homeHeroProps} />
       <LatarBelakang />
       <Support />
-      <CTA />
+
       <EnhancedStats />
-      <Testimonials />
-      <CTABelajar />
+
+
       <Footer />
     </div>
   );

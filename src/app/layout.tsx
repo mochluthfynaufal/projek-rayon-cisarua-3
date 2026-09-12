@@ -8,14 +8,14 @@ import PageTransition from "@/components/PageTransition";
 import CursorProvider from "@/components/CursorProvider";
 
 export const metadata: Metadata = {
-  title: "Sampedia - Edukasi Sampah untuk Semua",
+  title: "Cisarua 3 - Edukasi Sampah untuk Semua",
   description:
     "Platform edukasi pengelolaan sampah yang interaktif dan menyenangkan. Belajar memilah, mengolah, dan mengurangi sampah dengan cara yang mudah dipahami.",
   keywords:
     "sampah, edukasi, lingkungan, daur ulang, pengelolaan sampah, ramah lingkungan",
-  authors: [{ name: "Sampedia Team" }],
+  authors: [{ name: "Cisarua 3 Team" }],
   openGraph: {
-    title: "Sampedia - Edukasi Sampah untuk Semua",
+    title: "Cisarua 3 - Edukasi Sampah untuk Semua",
     description:
       "Platform edukasi pengelolaan sampah yang interaktif dan menyenangkan",
     type: "website",

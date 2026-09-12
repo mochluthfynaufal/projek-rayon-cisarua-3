@@ -87,7 +87,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-3xl font-bold text-white mb-4"
             >
-              Sampedia
+              Cisarua 3
             </motion.h1>
 
             {/* Loading Spinner */}

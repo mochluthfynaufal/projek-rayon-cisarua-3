@@ -61,14 +61,14 @@ const supportCategories = [
 
 const faqData = [
   {
-    question: "Bagaimana cara bergabung dengan komunitas Sampedia?",
+    question: "Bagaimana cara bergabung dengan komunitas Cisarua 3?",
     answer:
-      "Kamu bisa bergabung dengan komunitas Sampedia secara gratis melalui halaman Komunitas. Cukup daftar dengan email dan mulai berpartisipasi dalam diskusi dan tantangan.",
+      "Kamu bisa bergabung dengan komunitas Cisarua 3 secara gratis melalui halaman Komunitas. Cukup daftar dengan email dan mulai berpartisipasi dalam diskusi dan tantangan.",
   },
   {
     question: "Apakah semua materi pembelajaran gratis?",
     answer:
-      "Ya! Semua materi pembelajaran di Sampedia tersedia gratis untuk semua pengguna. Kami berkomitmen untuk memberikan edukasi lingkungan yang dapat diakses oleh siapa saja.",
+      "Ya! Semua materi pembelajaran di Cisarua 3 tersedia gratis untuk semua pengguna. Kami berkomitmen untuk memberikan edukasi lingkungan yang dapat diakses oleh siapa saja.",
   },
   {
     question: "Bagaimana sistem poin dan badge bekerja?",
@@ -172,7 +172,7 @@ export default function ContactPage() {
             </h1>
 
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Tim Sampedia siap membantu! Hubungi kami untuk pertanyaan, saran,
+              Tim Cisarua 3 siap membantu! Hubungi kami untuk pertanyaan, saran,
               atau bantuan apapun.
             </p>
           </div>
@@ -435,7 +435,7 @@ export default function ContactPage() {
                 Pertanyaan yang Sering Ditanyakan
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Temukan jawaban untuk pertanyaan umum seputar Sampedia
+                Temukan jawaban untuk pertanyaan umum seputar Cisarua 3
               </p>
             </div>
 

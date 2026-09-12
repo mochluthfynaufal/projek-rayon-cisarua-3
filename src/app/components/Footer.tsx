@@ -20,7 +20,7 @@ export default function Footer() {
               <div className="bg-emerald-500 p-2 rounded-full">
                 <Leaf className="w-6 h-6 text-white" />
               </div>
-              <span className="font-bold text-xl">Sampedia</span>
+              <span className="font-bold text-xl">Cisarua 3</span>
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
               Platform edukasi sampah yang mudah, seru, dan bisa dipraktikkan
@@ -93,7 +93,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2024 Sampedia. All rights reserved. Made with 💚 for our
+            &copy; 2024 Cisarua 3. All rights reserved. Made with 💚 for our
             planet.
           </p>
           <p className="mt-3">Develop by RizafiDev</p>

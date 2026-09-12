@@ -246,7 +246,7 @@ export default function CommunityChallenge() {
 
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
             Bergabunglah dengan tantangan seru dan buat dampak positif bersama
-            komunitas Sampedia! Raih poin, badge, dan hadiah menarik.
+            komunitas Cisarua 3! Raih poin, badge, dan hadiah menarik.
           </p>
         </div>
 
