@@ -41,23 +41,67 @@ const jabatanColors: Record<Jabatan, string> = {
   "Anggota":     "bg-gray-100   text-gray-700   border-gray-300",
 };
 
-const angkatanStyle: Record<Angkatan, { badge: string; label: string }> = {
-  "Kelas X":         { badge: "bg-emerald-50 text-emerald-700", label: "Aktif"  },
-  "Kelas XI":        { badge: "bg-amber-50   text-amber-700",   label: "Aktif"  },
-  "Kelas XII (PKL)": { badge: "bg-blue-50    text-blue-700",    label: "PKL"    },
-  "Alumni":          { badge: "bg-gray-100   text-gray-600",    label: "Alumni" },
-};
+// ─── Sistem Warna Berdasarkan Tahun Angkatan (Siklis) ─────────────────────────
+// Urutan: Biru → Pink → Kuning → Biru → Pink → Kuning → ...
+// Alumni selalu Abu-abu
+const ANGKATAN_COLOR_CYCLE = [
+  // Biru
+  {
+    badge: "bg-blue-50 text-blue-700",
+    border: "border-blue-200",
+    hover: "hover:border-blue-400",
+    glow: "hover:shadow-blue-100",
+    text: "text-blue-600",
+    avatar: "bg-blue-600",
+  },
+  // Pink
+  {
+    badge: "bg-pink-50 text-pink-700",
+    border: "border-pink-200",
+    hover: "hover:border-pink-400",
+    glow: "hover:shadow-pink-100",
+    text: "text-pink-600",
+    avatar: "bg-pink-600",
+  },
+  // Kuning
+  {
+    badge: "bg-yellow-50 text-yellow-700",
+    border: "border-yellow-200",
+    hover: "hover:border-yellow-400",
+    glow: "hover:shadow-yellow-100",
+    text: "text-yellow-600",
+    avatar: "bg-yellow-500",
+  },
+] as const;
+
+const ALUMNI_COLOR = {
+  badge: "bg-gray-100 text-gray-600",
+  border: "border-gray-200",
+  hover: "hover:border-gray-400",
+  glow: "hover:shadow-gray-100",
+  text: "text-gray-500",
+  avatar: "bg-gray-500",
+} as const;
+
+// Kumpulkan semua tahun angkatan unik (non-alumni), urutkan ascending
+const uniqueTahunAngkatan = [...new Set(
+  daftarSiswa
+    .filter(s => s.angkatan !== "Alumni")
+    .map(s => s.tahunAngkatan)
+)].sort();
+
+// Map tahun angkatan → warna
+const tahunAngkatanColorMap = new Map(
+  uniqueTahunAngkatan.map((tahun, idx) => [tahun, ANGKATAN_COLOR_CYCLE[idx % ANGKATAN_COLOR_CYCLE.length]])
+);
+
+function getAngkatanColor(siswa: { angkatan: Angkatan; tahunAngkatan: string }) {
+  if (siswa.angkatan === "Alumni") return ALUMNI_COLOR;
+  return tahunAngkatanColorMap.get(siswa.tahunAngkatan) ?? ANGKATAN_COLOR_CYCLE[0];
+}
 
 const jabatanOptions: Jabatan[] = ["Ketua", "Wakil Ketua", "Sekretaris", "Bendahara", "Anggota"];
 const angkatanOptions: Angkatan[] = ["Kelas X", "Kelas XI", "Kelas XII (PKL)", "Alumni"];
-
-// Warna border card sesuai kelas
-const angkatanBorder: Record<Angkatan, { border: string; hover: string; glow: string; text: string }> = {
-  "Kelas X":         { border: "border-emerald-200", hover: "hover:border-emerald-400", glow: "hover:shadow-emerald-100", text: "text-emerald-600" },
-  "Kelas XI":        { border: "border-amber-200",   hover: "hover:border-amber-400",   glow: "hover:shadow-amber-100",   text: "text-amber-600"   },
-  "Kelas XII (PKL)": { border: "border-blue-200",    hover: "hover:border-blue-400",    glow: "hover:shadow-blue-100",    text: "text-blue-600"    },
-  "Alumni":          { border: "border-gray-200",    hover: "hover:border-gray-400",    glow: "hover:shadow-gray-100",    text: "text-gray-500"    },
-};
 
 // ─── Modal Profil Siswa ───────────────────────────────────────────────────────
 function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) {
@@ -75,7 +119,7 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
     };
   }, [siswa.id, onClose]);
 
-  const angkBadge = angkatanStyle[siswa.angkatan];
+  const angkColor = getAngkatanColor(siswa);
   const formatTanggal = (iso: string) =>
     new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
 
@@ -111,7 +155,7 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
           </button>
 
           {/* Avatar */}
-          <div className={`absolute -bottom-9 left-5 w-18 h-18 w-[72px] h-[72px] ${siswa.warnaBg} rounded-2xl flex items-center justify-center shadow-xl border-4 border-white`}>
+          <div className={`absolute -bottom-9 left-5 w-18 h-18 w-[72px] h-[72px] ${angkColor.avatar} rounded-2xl flex items-center justify-center shadow-xl border-4 border-white`}>
             {siswa.angkatan === "Alumni"
               ? <GraduationCap className="w-8 h-8 text-white" />
               : <span className="text-white font-extrabold text-xl">{siswa.inisial}</span>
@@ -149,8 +193,8 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
             <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${jabatanColors[siswa.jabatan]}`}>
               {siswa.jabatan}
             </span>
-            <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${angkBadge.badge}`}>
-              {angkBadge.label}
+            <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${angkColor.badge}`}>
+              {siswa.angkatan === "Alumni" ? "Alumni" : "Aktif"}
             </span>
           </div>
 
@@ -313,10 +357,10 @@ export default function DaftarSiswa() {
                 <button
                   key={siswa.id}
                   onClick={() => setSelected(siswa)}
-                  className={`bg-white border-2 ${angkatanBorder[siswa.angkatan].border} ${angkatanBorder[siswa.angkatan].hover} ${angkatanBorder[siswa.angkatan].glow} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer`}
+                  className={`bg-white border-2 ${getAngkatanColor(siswa).border} ${getAngkatanColor(siswa).hover} ${getAngkatanColor(siswa).glow} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer`}
                 >
                   {/* Avatar */}
-                  <div className={`w-14 h-14 ${siswa.warnaBg} rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                  <div className={`w-14 h-14 ${getAngkatanColor(siswa).avatar} rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
                     {siswa.angkatan === "Alumni"
                       ? <GraduationCap className="w-7 h-7 text-white" />
                       : <span className="text-white font-extrabold text-base">{siswa.inisial}</span>
@@ -343,7 +387,7 @@ export default function DaftarSiswa() {
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border mb-1.5 ${jabatanColors[siswa.jabatan]}`}>
                         {siswa.jabatan}
                       </span>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${angkatanStyle[siswa.angkatan].badge}`}>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${getAngkatanColor(siswa).badge}`}>
                         {siswa.angkatan}
                       </span>
                       <span className="text-[9px] text-gray-400 mt-1">{siswa.tahunAngkatan}</span>
@@ -351,7 +395,7 @@ export default function DaftarSiswa() {
                   )}
 
                   {/* Hint lihat profil */}
-                  <span className={`mt-2 text-[9px] ${angkatanBorder[siswa.angkatan].text} font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
+                  <span className={`mt-2 text-[9px] ${getAngkatanColor(siswa).text} font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
                     Lihat Profil →
                   </span>
                 </button>

@@ -62,20 +62,30 @@ export const daftarSiswa: Siswa[] = [
   { id: 35, nama: "Siti Erfina Nurmawati",         nis: "12611994", jabatan: "Anggota", angkatan: "Kelas X", tahunAngkatan: "2026/2027", inisial: "SE", warnaBg: "bg-emerald-500" },
   { id: 36, nama: "Viona Oktora Mulyana Putri",    nis: "12612043", jabatan: "Anggota", angkatan: "Kelas X", tahunAngkatan: "2026/2027", inisial: "VO", warnaBg: "bg-violet-500"  },
 
-  // ── KELAS XII (PKL) — PLACEHOLDER ────────────────────────────────────────
-  { id: 37, nama: "Siswa XII-01", nis: "12410001", jabatan: "Ketua",      angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P1", warnaBg: "bg-blue-600"   },
-  { id: 38, nama: "Siswa XII-02", nis: "12410002", jabatan: "Wakil Ketua",angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P2", warnaBg: "bg-indigo-600" },
-  { id: 39, nama: "Siswa XII-03", nis: "12410003", jabatan: "Sekretaris", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P3", warnaBg: "bg-violet-600" },
-  { id: 40, nama: "Siswa XII-04", nis: "12410004", jabatan: "Bendahara",  angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P4", warnaBg: "bg-sky-600"    },
-  { id: 41, nama: "Siswa XII-05", nis: "12410005", jabatan: "Anggota",    angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P5", warnaBg: "bg-blue-700"   },
-  { id: 42, nama: "Siswa XII-06", nis: "12410006", jabatan: "Anggota",    angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "P6", warnaBg: "bg-cyan-700"   },
+  // ── KELAS XII (PKL) — ANGKATAN 29 — 2024/2025 ───────────────────────────
+  { id: 37, nama: "Air Langga Ali Syahbani",          nis: "12410151", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "AA", warnaBg: "bg-blue-600"   },
+  { id: 38, nama: "Almayra Nadhir",                   nis: "12410176", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "AN", warnaBg: "bg-indigo-600" },
+  { id: 39, nama: "Alnyra Aisyah Rachman",            nis: "12410178", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "AR", warnaBg: "bg-violet-600" },
+  { id: 40, nama: "Dafi Hawandie",                    nis: "12410239", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "DH", warnaBg: "bg-sky-600"    },
+  { id: 41, nama: "Deby Nur Arfiyah Saputri",         nis: "12410246", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "DN", warnaBg: "bg-blue-700"   },
+  { id: 42, nama: "Fara Ayu Sudibyo",                 nis: "12410282", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "FS", warnaBg: "bg-cyan-700"   },
+  { id: 43, nama: "Ghea Andara Ayudinata",            nis: "12410306", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "GA", warnaBg: "bg-blue-500"   },
+  { id: 44, nama: "Muhamad Habibie Raysyah Toha",     nis: "12410439", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "MH", warnaBg: "bg-indigo-500" },
+  { id: 45, nama: "Muhamad Ramadhan Fadilah Tjiptadi",nis: "12410462", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "MR", warnaBg: "bg-violet-500" },
+  { id: 46, nama: "Muhammad Razzan Firdaus",          nis: "12410556", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "MR", warnaBg: "bg-sky-500"    },
+  { id: 47, nama: "Muhammad Rizki Maulana",           nis: "12410562", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "MR", warnaBg: "bg-blue-800"   },
+  { id: 48, nama: "Mutia Oktaviani",                  nis: "12410574", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "MO", warnaBg: "bg-indigo-700" },
+  { id: 49, nama: "Nazwa Afifa Sahira",               nis: "12410600", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "NA", warnaBg: "bg-cyan-600"   },
+  { id: 50, nama: "Nelsa Septia Putri",               nis: "12410606", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "NS", warnaBg: "bg-violet-700" },
+  { id: 51, nama: "Queentana Allea Hasanath",         nis: "12410639", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "QA", warnaBg: "bg-blue-600"   },
+  { id: 52, nama: "Sylvia Aljazira Wafdah",           nis: "12410741", jabatan: "Anggota", angkatan: "Kelas XII (PKL)", tahunAngkatan: "2024/2025", inisial: "SW", warnaBg: "bg-indigo-600" },
 
   // ── ALUMNI — PLACEHOLDER ─────────────────────────────────────────────────
-  { id: 43, nama: "Alumni RC3-01", nis: "2110001", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A1", warnaBg: "bg-gray-500" },
-  { id: 44, nama: "Alumni RC3-02", nis: "2110002", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A2", warnaBg: "bg-gray-600" },
-  { id: 45, nama: "Alumni RC3-03", nis: "2110003", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A3", warnaBg: "bg-gray-700" },
-  { id: 46, nama: "Alumni RC3-04", nis: "2110004", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2023", inisial: "A4", warnaBg: "bg-slate-500" },
-  { id: 47, nama: "Alumni RC3-05", nis: "2110005", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2023", inisial: "A5", warnaBg: "bg-slate-600" },
+  { id: 53, nama: "Alumni RC3-01", nis: "2110001", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A1", warnaBg: "bg-gray-500" },
+  { id: 54, nama: "Alumni RC3-02", nis: "2110002", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A2", warnaBg: "bg-gray-600" },
+  { id: 55, nama: "Alumni RC3-03", nis: "2110003", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2024", inisial: "A3", warnaBg: "bg-gray-700" },
+  { id: 56, nama: "Alumni RC3-04", nis: "2110004", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2023", inisial: "A4", warnaBg: "bg-slate-500" },
+  { id: 57, nama: "Alumni RC3-05", nis: "2110005", jabatan: "Anggota", angkatan: "Alumni", tahunAngkatan: "Lulus 2023", inisial: "A5", warnaBg: "bg-slate-600" },
 ];
 
 // ── Helper: hitung siswa aktif (Kelas X, XI, XII PKL — bukan Alumni) ─────────
