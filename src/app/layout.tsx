@@ -5,8 +5,6 @@ import "./globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import PageTransition from "@/components/PageTransition";
 
-import CursorProvider from "@/components/CursorProvider";
-
 export const metadata: Metadata = {
   title: "Cisarua 3 - Edukasi Sampah untuk Semua",
   description:
@@ -35,7 +33,6 @@ export default function RootLayout({
           <PageTransition>
             {children}
             <Analytics />
-            <CursorProvider />
           </PageTransition>
         </LenisProvider>
       </body>

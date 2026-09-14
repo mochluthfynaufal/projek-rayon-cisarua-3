@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   Menu,
   X,
@@ -18,6 +19,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [siswaLogin, setSiswaLogin] = useState<Siswa | null>(null);
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const pathname = usePathname();
 
   // Theme colors based on route
@@ -150,56 +152,76 @@ export default function Navbar() {
         }`}
       >
         <div
-          className={`backdrop-blur-[1px] rounded-full px-8 py-3 bg-transparent border border-gray-200 transition-all duration-300 shadow-lg ${
-            scrolled ? "py-2 bg-white/90 backdrop-blur-md" : ""
+          className={`backdrop-blur-md rounded-full px-7 py-2.5 bg-white/85 hover:bg-white/95 border border-white/80 hover:border-gray-300/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 ${
+            scrolled ? "py-2 bg-white/95 backdrop-blur-lg shadow-md" : ""
           }`}
         >
           <div className="flex items-center justify-center">
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-2">
               {/* Logo/Brand */}
-              <div className="flex items-center space-x-2 pr-4">
+              <a
+                href="/"
+                className="group flex items-center space-x-2 pr-4 transition-transform duration-300 hover:scale-105 cursor-pointer"
+              >
                 <div
-                  className={`bg-gradient-to-br ${theme.gradient} p-2 rounded-full shadow-sm`}
+                  className={`bg-gradient-to-br ${theme.gradient} p-2 rounded-full shadow-sm group-hover:shadow-md group-hover:rotate-12 transition-all duration-300`}
                 >
-                  <Leaf className="w-5 h-5 text-white" />
+                  <Leaf className="w-5 h-5 text-white transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <span
-                  className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
+                  className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent group-hover:opacity-90`}
                 >
                   Cisarua 3
                 </span>
-              </div>
+              </a>
 
               {/* Separator */}
               <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-              {navItems.map((item) => {
-                const IconComponent = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    className={`group flex items-center space-x-2 px-5 py-2.5 rounded-full transition-all duration-300 relative overflow-hidden ${
-                      isActive
-                        ? `${theme.bg} ${theme.textHover.replace(
-                            "hover:",
-                            ""
-                          )} shadow-sm`
-                        : `text-gray-700 ${theme.textHover} ${theme.bgHover}`
-                    }`}
-                  >
-                    <IconComponent className="w-4 h-4" />
-                    <span className="text-sm font-medium whitespace-nowrap">
-                      {item.label}
-                    </span>
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-r ${theme.gradientOverlay} opacity-0 group-hover:opacity-8 transition-opacity duration-300 rounded-full`}
-                    ></div>
-                  </a>
-                );
-              })}
+              {/* Nav Items Container with sliding active pill */}
+              <div
+                className="flex items-center space-x-1 relative"
+                onMouseLeave={() => setHoveredHref(null)}
+              >
+                {navItems.map((item) => {
+                  const IconComponent = item.icon;
+                  const activeTarget = hoveredHref ?? pathname;
+                  const isSelected = activeTarget === item.href;
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      onMouseEnter={() => setHoveredHref(item.href)}
+                      className={`relative flex items-center space-x-2 px-4.5 py-2 rounded-full transition-colors duration-200 select-none z-10 ${
+                        isSelected
+                          ? `${theme.textHover.replace("hover:", "")} font-semibold`
+                          : "text-gray-600 hover:text-gray-900 font-medium"
+                      }`}
+                    >
+                      {isSelected && (
+                        <motion.div
+                          layoutId="nav-sliding-pill"
+                          className={`absolute inset-0 ${theme.bg} rounded-full -z-10 shadow-sm`}
+                          transition={{
+                            type: "spring",
+                            stiffness: 450,
+                            damping: 32,
+                          }}
+                        />
+                      )}
+                      <IconComponent
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isSelected ? "scale-110 -rotate-3" : ""
+                        }`}
+                      />
+                      <span className="text-sm whitespace-nowrap">
+                        {item.label}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
 
               {/* Separator */}
               <div className="w-px h-6 bg-gray-200 mx-2"></div>
@@ -208,25 +230,25 @@ export default function Navbar() {
               {siswaLogin ? (
                 <a
                   href="/quiz"
-                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md px-3 py-1.5 rounded-full transition-all duration-300 group"
+                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md hover:scale-105 active:scale-95 px-3 py-1.5 rounded-full transition-all duration-300 group"
                 >
                   {/* Avatar */}
-                  <div className={`w-7 h-7 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0`}>
+                  <div className={`w-7 h-7 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0 group-hover:rotate-6 transition-transform duration-300`}>
                     <span className="text-white font-extrabold text-[10px]">{siswaLogin.inisial}</span>
                   </div>
                   {/* Nama dipersingkat */}
                   <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 max-w-[120px] truncate">
                     {siswaLogin.nama.split(" ")[0]}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-colors duration-200 flex-shrink-0" />
                 </a>
               ) : (
                 <a
                   href="/quiz?from=nav"
-                  className={`bg-gradient-to-r ${theme.gradient} text-white px-5 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:scale-105 transition-all duration-300 whitespace-nowrap flex items-center gap-2`}
+                  className={`bg-gradient-to-r ${theme.gradient} text-white px-5 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap flex items-center gap-2 group`}
                 >
-                  <LogIn className="w-4 h-4" />
-                 Login
+                  <LogIn className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  <span>Login</span>
                 </a>
               )}
             </div>
