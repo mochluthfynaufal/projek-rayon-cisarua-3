@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef } from "react";
 
 export default function Paralax() {
@@ -8,7 +9,7 @@ export default function Paralax() {
       if (!parallaxRef.current) return;
 
       const scrolled = window.pageYOffset;
-      const threshold = 300; // Parallax dimulai setelah scroll 700px
+      const threshold = 300; // Parallax dimulai setelah scroll 300px
 
       const parallaxElements =
         parallaxRef.current.querySelectorAll("[data-speed]");
@@ -66,3 +67,4 @@ export default function Paralax() {
     </section>
   );
 }
+

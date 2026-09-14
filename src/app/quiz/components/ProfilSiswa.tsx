@@ -150,17 +150,17 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
       <div className="max-w-2xl mx-auto space-y-6">
 
         {/* ─── Profile Card ───────────────────────────────────────────────── */}
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-xl border border-emerald-100/80 overflow-hidden">
 
           {/* Banner + Avatar di dalamnya */}
-          <div className="h-40 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 relative">
+          <div className="h-40 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 relative">
             <div className="absolute inset-0 opacity-20"
               style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "30px 30px" }}
             />
             {/* Logout */}
             <button
               onClick={onLogout}
-              className="absolute top-4 right-4 flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-all backdrop-blur-sm"
+              className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/20 hover:bg-black/30 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-all backdrop-blur-sm border border-white/20"
             >
               <LogOut className="w-3.5 h-3.5" /> Keluar
             </button>
@@ -193,15 +193,15 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
             </div>
 
             {/* ── Bio ─────────────────────────────────────────────────────── */}
-            <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  <User className="w-3.5 h-3.5" /> Bio
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <User className="w-3.5 h-3.5 text-emerald-600" /> Bio
                 </div>
                 {!editBio && (
                   <button
                     onClick={() => { setDraftBio(profil.bio); setEditBio(true); }}
-                    className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium transition-colors"
+                    className="text-xs text-emerald-600 hover:text-emerald-800 flex items-center gap-1 font-semibold transition-colors"
                   >
                     <Edit3 className="w-3 h-3" /> Edit
                   </button>
@@ -216,7 +216,7 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
                     rows={3}
                     placeholder="Tulis bio singkat tentang dirimu..."
                     maxLength={300}
-                    className="w-full text-sm border border-indigo-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none bg-white"
+                    className="w-full text-sm border border-emerald-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none bg-white"
                   />
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-gray-400">{draftBio.length}/300</span>
@@ -224,7 +224,7 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
                       <button onClick={() => setEditBio(false)} className="text-xs text-gray-500 hover:text-gray-700 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors">
                         <X className="w-3 h-3" /> Batal
                       </button>
-                      <button onClick={saveBio} className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-indigo-700 transition-colors font-semibold">
+                      <button onClick={saveBio} className="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-emerald-700 transition-colors font-semibold shadow-sm">
                         <Save className="w-3 h-3" /> Simpan
                       </button>
                     </div>
@@ -240,11 +240,11 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
         </div>
 
         {/* ─── Prestasi Card ──────────────────────────────────────────────── */}
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <Trophy className="w-4 h-4 text-yellow-600" />
+              <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-amber-600" />
               </div>
               <div>
                 <h2 className="font-bold text-slate-800 text-sm">Daftar Kejuaraan</h2>
@@ -253,7 +253,7 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
             </div>
             <button
               onClick={openAddForm}
-              className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all hover:scale-105 shadow-sm"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all hover:scale-105 shadow-sm shadow-emerald-600/20"
             >
               <Plus className="w-3.5 h-3.5" /> Tambah
             </button>
@@ -261,32 +261,32 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
 
           {/* Form Tambah/Edit */}
           {showForm && (
-            <div className="mx-4 mt-4 bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
-              <h3 className="font-bold text-indigo-800 text-sm mb-4">
+            <div className="mx-4 mt-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl p-5">
+              <h3 className="font-bold text-emerald-900 text-sm mb-4">
                 {editId ? "Edit Prestasi" : "Tambah Prestasi Baru"}
               </h3>
               <div className="space-y-3">
 
                 {/* Nama kejuaraan */}
                 <div>
-                  <label className="block text-xs font-semibold text-indigo-700 mb-1">Nama Kejuaraan</label>
+                  <label className="block text-xs font-semibold text-emerald-800 mb-1">Nama Kejuaraan</label>
                   <input
                     type="text"
                     placeholder="Contoh: Lomba Cerdas Cermat PAI"
                     value={form.nama}
                     onChange={(e) => setForm({ ...form, nama: e.target.value })}
-                    className="w-full border border-indigo-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                    className="w-full border border-emerald-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   {/* Juara */}
                   <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">Juara</label>
+                    <label className="block text-xs font-semibold text-emerald-800 mb-1">Juara</label>
                     <select
                       value={form.juara}
                       onChange={(e) => setForm({ ...form, juara: e.target.value })}
-                      className="w-full border border-indigo-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                      className="w-full border border-emerald-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                     >
                       {juaraOptions.map((j) => <option key={j} value={j}>{j}</option>)}
                     </select>
@@ -294,11 +294,11 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
 
                   {/* Tingkat */}
                   <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">Tingkat</label>
+                    <label className="block text-xs font-semibold text-emerald-800 mb-1">Tingkat</label>
                     <select
                       value={form.tingkat}
                       onChange={(e) => setForm({ ...form, tingkat: e.target.value })}
-                      className="w-full border border-indigo-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                      className="w-full border border-emerald-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                     >
                       {tingkatOptions.map((t) => <option key={t} value={t}>{t}</option>)}
                     </select>
@@ -307,12 +307,12 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
 
                 {/* Tanggal */}
                 <div>
-                  <label className="block text-xs font-semibold text-indigo-700 mb-1">Tanggal Pelaksanaan</label>
+                  <label className="block text-xs font-semibold text-emerald-800 mb-1">Tanggal Pelaksanaan</label>
                   <input
                     type="date"
                     value={form.tanggal}
                     onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
-                    className="w-full border border-indigo-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                    className="w-full border border-emerald-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                   />
                 </div>
 
@@ -326,7 +326,7 @@ export default function ProfilSiswa({ siswa, onLogout }: Props) {
                   <button
                     onClick={submitForm}
                     disabled={!form.nama.trim() || !form.tanggal}
-                    className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-teal-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                   >
                     <CheckCircle className="w-4 h-4" /> {editId ? "Perbarui" : "Simpan"}
                   </button>

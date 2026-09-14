@@ -60,12 +60,12 @@ function LoginPageInner() {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-emerald-50/70 via-teal-50/50 via-sky-50/40 to-amber-50/60 relative">
       <Navbar />
 
       {loading ? (
         <div className="min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : loggedIn ? (
         <ProfilSiswa siswa={loggedIn} onLogout={handleLogout} />

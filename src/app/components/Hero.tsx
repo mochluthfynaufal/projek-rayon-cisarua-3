@@ -7,6 +7,7 @@ import RotatingText from "../rb/RotatingText/RotatingText";
 
 interface HeroProps {
   title: string;
+  highlightPrefix?: string;
   rotatingTexts: string[];
   subtitle: string;
   primaryColor: string;
@@ -29,6 +30,7 @@ interface HeroProps {
 
 export default function Hero({
   title,
+  highlightPrefix = "Kamu",
   rotatingTexts,
   subtitle,
   primaryColor,
@@ -62,39 +64,39 @@ export default function Hero({
             transformPerspective: 1000,
           }}
         >
-          <h1 className="text-4xl md:text-4xl  lg:text-6xl font-bold text-gray-700 mb-2 ">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-3 tracking-tight">
             {title}
           </h1>
-          <span
-            className={`${primaryColor} gap-4 items-center justify-center flex text-4xl md:text-4xl lg:text-6xl font-bold`}
+          <div
+            className={`${primaryColor} gap-3 items-center justify-center flex flex-wrap text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[3.5rem]`}
           >
-            Kamu
+            <span>{highlightPrefix}</span>
             <RotatingText
               texts={rotatingTexts}
-              mainClassName={`px-2 w-fit text-shadow-lg sm:px-2 md:px-3 ${theme.primaryColor} inset-shadow-sm inset-shadow-black/15 text-white font-bold overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg`}
+              mainClassName={`px-3.5 py-1 sm:px-4 sm:py-1.5 md:py-2 text-shadow-sm ${theme.primaryColor} shadow-lg shadow-black/10 text-white font-black overflow-hidden justify-center rounded-2xl inline-flex items-center`}
               staggerFrom={"last"}
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "-120%" }}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "-120%", opacity: 0 }}
               staggerDuration={0.025}
-              splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+              splitLevelClassName="overflow-hidden leading-tight"
               transition={{ type: "spring", damping: 30, stiffness: 400 }}
-              rotationInterval={2000}
+              rotationInterval={2200}
             />
-          </span>
-          <p className="text-lg mt-4 md:text-xl text-gray-600 mb-8 max-w-xl mx-auto">
+          </div>
+          <p className="text-base sm:text-lg md:text-xl text-slate-600 mt-4 mb-8 max-w-xl mx-auto leading-relaxed">
             {subtitle}
           </p>
-          <div className="flex gap-4 justify-center ">
+          <div className="flex gap-4 justify-center">
             <button
               onClick={ctaPrimary.action}
-              className={`${theme.primaryColor} text-shadow-sm inset-shadow-sm inset-shadow-black/15 ${theme.primaryHover} text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 `}
+              className={`${theme.primaryColor} text-shadow-sm shadow-md ${theme.primaryHover} text-white font-bold py-3 px-7 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95`}
             >
               {ctaPrimary.text}
             </button>
             <button
               onClick={ctaSecondary.action}
-              className={`border-2 ${theme.borderColor} ${primaryColor} ${theme.hoverBg} font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105`}
+              className={`border-2 ${theme.borderColor} ${primaryColor} ${theme.hoverBg} font-bold py-3 px-7 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95`}
             >
               {ctaSecondary.text}
             </button>

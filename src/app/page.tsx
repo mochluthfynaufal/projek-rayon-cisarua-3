@@ -11,13 +11,13 @@ import Footer from "./components/Footer";
 
 export default function Home() {
   const homeHeroProps = {
-    title: "Sampah Aja Diedukasi,",
+    title: "Rayon Cisarua 3,",
     rotatingTexts: [
-      "Gimana?",
-      "Masih Cuek",
-      "Kapan Belajar?",
-      "Nggak Malu?",
-      "Kapan Sadar?",
+      "Solid!",
+      "Bersatu",
+      "Berkarya",
+      "Berdampak",
+      "#CISARUASOLID",
     ],
     subtitle:
       "Belajar memilah, mengolah, dan mengurangi sampah dengan cara yang mudah dan menyenangkan.",

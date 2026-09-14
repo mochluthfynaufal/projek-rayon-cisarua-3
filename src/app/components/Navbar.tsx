@@ -48,15 +48,15 @@ export default function Navbar() {
       };
     } else if (pathname === "/quiz") {
       return {
-        primary: "indigo",
-        gradient: "from-indigo-600 to-purple-600",
-        gradientHover: "from-indigo-700 to-purple-700",
-        text: "from-indigo-600 to-purple-600",
-        bg: "bg-indigo-100",
-        bgHover: "hover:bg-indigo-50/80",
-        textHover: "hover:text-indigo-600",
-        borderColor: "border-indigo-100",
-        gradientOverlay: "from-indigo-400 to-purple-500",
+        primary: "emerald",
+        gradient: "from-emerald-500 via-teal-500 to-cyan-600",
+        gradientHover: "from-emerald-600 via-teal-600 to-cyan-700",
+        text: "from-emerald-600 to-teal-600",
+        bg: "bg-emerald-100",
+        bgHover: "hover:bg-emerald-50/80",
+        textHover: "hover:text-emerald-600",
+        borderColor: "border-emerald-100",
+        gradientOverlay: "from-emerald-400 to-teal-500",
       };
     } else if (pathname === "/contact") {
       return {
@@ -126,7 +126,7 @@ export default function Navbar() {
     },
     {
       icon: BookOpen,
-      label: "Belajar",
+      label: "Kelas",
       href: "/belajar",
     },
     {
@@ -226,7 +226,7 @@ export default function Navbar() {
                   className={`bg-gradient-to-r ${theme.gradient} text-white px-5 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:scale-105 transition-all duration-300 whitespace-nowrap flex items-center gap-2`}
                 >
                   <LogIn className="w-4 h-4" />
-                  Login Siswa
+                 Login
                 </a>
               )}
             </div>
@@ -350,7 +350,7 @@ export default function Navbar() {
                 className={`w-full bg-gradient-to-r ${theme.gradient} text-white py-3 rounded-2xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2`}
               >
                 <LogIn className="w-4 h-4" />
-                Login Siswa
+                Login
               </a>
             )}
           </div>

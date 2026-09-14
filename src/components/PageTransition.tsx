@@ -19,21 +19,24 @@ export default function PageTransition({ children }: PageTransitionProps) {
   const getThemeColors = () => {
     if (pathname === "/belajar") return { from: "#facc15", to: "#ca8a04" }; // yellow-400 to yellow-600
     if (pathname === "/komunitas") return { from: "#60a5fa", to: "#2563eb" }; // blue-400 to blue-600
-    if (pathname === "/quiz") return { from: "#a78bfa", to: "#7c3aed" }; // purple-400 to purple-600
-    return { from: "#34d399", to: "#059669" }; // emerald-400 to emerald-600
+    if (pathname === "/quiz") return { from: "#10b981", to: "#0d9488" }; // emerald-500 to teal-600
+    if (pathname === "/contact") return { from: "#ef4444", to: "#dc2626" }; // red-500 to red-600
+    return { from: "#34d399", to: "#059669" }; // emerald-400 to emerald-600 (Beranda)
   };
 
   const getAccentColor = () => {
     if (pathname === "/belajar") return "text-yellow-500";
     if (pathname === "/komunitas") return "text-blue-500";
-    if (pathname === "/quiz") return "text-purple-500";
+    if (pathname === "/quiz") return "text-emerald-500";
+    if (pathname === "/contact") return "text-red-500";
     return "text-emerald-500";
   };
 
   const getPageName = () => {
-    if (pathname === "/belajar") return "Belajar";
+    if (pathname === "/belajar") return "Kelas";
     if (pathname === "/komunitas") return "Komunitas";
-    if (pathname === "/quiz") return "Quiz";
+    if (pathname === "/quiz") return "Login Siswa";
+    if (pathname === "/contact") return "Kontak";
     if (pathname === "/") return "Beranda";
     return "Halaman";
   };
@@ -77,7 +80,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
             >
-              <Leaf className="w-10 h-10 text-emerald-500" />
+              <Leaf className={`w-10 h-10 ${getAccentColor()}`} />
             </motion.div>
 
             {/* Brand Name */}
