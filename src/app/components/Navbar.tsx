@@ -1,6 +1,7 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Menu,
@@ -8,19 +9,25 @@ import {
   Leaf,
   BookOpen,
   Users,
-  Phone,
   Home,
   LogIn,
-  ChevronDown,
+  LogOut,
+  MessageSquareWarning,
+  KeyRound,
+  UserCircle2
 } from "lucide-react";
-import { daftarSiswa, type Siswa } from "@/lib/siswaData";
+import { useAuth } from "@/context/AuthContext";
+import ModalUbahPassword from "@/app/components/ModalUbahPassword";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [siswaLogin, setSiswaLogin] = useState<Siswa | null>(null);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, profile, role, logout } = useAuth();
 
   // Theme colors based on route
   const getThemeColors = () => {
@@ -35,6 +42,18 @@ export default function Navbar() {
         textHover: "hover:text-yellow-600",
         borderColor: "border-yellow-100",
         gradientOverlay: "from-yellow-400 to-yellow-500",
+      };
+    } else if (pathname === "/contact" || pathname === "/keluhan") {
+      return {
+        primary: "yellow",
+        gradient: "from-yellow-500 to-amber-600",
+        gradientHover: "from-yellow-600 to-amber-700",
+        text: "from-yellow-600 to-amber-600",
+        bg: "bg-yellow-100",
+        bgHover: "hover:bg-yellow-50/80",
+        textHover: "hover:text-yellow-600",
+        borderColor: "border-yellow-100",
+        gradientOverlay: "from-yellow-400 to-amber-500",
       };
     } else if (pathname === "/komunitas") {
       return {
@@ -60,20 +79,7 @@ export default function Navbar() {
         borderColor: "border-emerald-100",
         gradientOverlay: "from-emerald-400 to-teal-500",
       };
-    } else if (pathname === "/contact") {
-      return {
-        primary: "red",
-        gradient: "from-red-500 to-red-600",
-        gradientHover: "from-red-600 to-red-700",
-        text: "from-red-600 to-red-600",
-        bg: "bg-red-100",
-        bgHover: "hover:bg-red-50/80",
-        textHover: "hover:text-red-600",
-        borderColor: "border-red-100",
-        gradientOverlay: "from-red-400 to-red-500",
-      };
     }
-    // Default emerald theme for home and other routes
     return {
       primary: "emerald",
       gradient: "from-green-500 to-emerald-600",
@@ -89,28 +95,6 @@ export default function Navbar() {
 
   const theme = getThemeColors();
 
-  // Baca session siswa dari sessionStorage
-  useEffect(() => {
-    const checkSession = () => {
-      const saved = sessionStorage.getItem("siswa_session");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved) as { id: number };
-          const found = daftarSiswa.find((s) => s.id === parsed.id) ?? null;
-          setSiswaLogin(found);
-        } catch {
-          setSiswaLogin(null);
-        }
-      } else {
-        setSiswaLogin(null);
-      }
-    };
-    checkSession();
-    // sessionStorage tidak memicu event 'storage', pakai custom event
-    window.addEventListener("sessionchange", checkSession);
-    return () => window.removeEventListener("sessionchange", checkSession);
-  }, [pathname]);
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -119,7 +103,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Simplified nav items without dropdown
   const navItems = [
     {
       icon: Home,
@@ -128,31 +111,49 @@ export default function Navbar() {
     },
     {
       icon: BookOpen,
-      label: "Kelas",
+      label: "Rayon & Kelas",
       href: "/belajar",
+    },
+    {
+      icon: MessageSquareWarning,
+      label: "Keluhan Rayon",
+      href: "/contact",
     },
     {
       icon: Users,
       label: "Komunitas",
       href: "/komunitas",
     },
-    {
-      icon: Phone,
-      label: "Kontak",
-      href: "/contact",
-    },
   ];
+
+  const getRoleBadge = () => {
+    switch (role) {
+      case "admin":
+        return { label: "Admin", bg: "bg-red-100 text-red-800" };
+      case "guru":
+        return { label: "Guru / PS", bg: "bg-purple-100 text-purple-800" };
+      case "pengurus":
+        return { label: "Pengurus", bg: "bg-yellow-100 text-yellow-800" };
+      case "siswa":
+        return { label: "Siswa", bg: "bg-blue-100 text-blue-800" };
+      default:
+        return null;
+    }
+  };
+
+  const roleBadge = getRoleBadge();
+  const isLoggedIn = !!user || !!profile;
 
   return (
     <>
       {/* Desktop Navbar - Capsule Shape */}
       <nav
-        className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-[90] transition-all duration-500 ease-in-out  ${
+        className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-[90] transition-all duration-500 ease-in-out ${
           scrolled ? "scale-95 top-4" : "scale-100"
         }`}
       >
         <div
-          className={`backdrop-blur-md rounded-full px-7 py-2.5 bg-white/85 hover:bg-white/95 border border-white/80 hover:border-gray-300/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 ${
+          className={`backdrop-blur-md rounded-full px-6 py-2.5 bg-white/90 hover:bg-white/98 border border-white/80 hover:border-gray-300/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 ${
             scrolled ? "py-2 bg-white/95 backdrop-blur-lg shadow-md" : ""
           }`}
         >
@@ -162,7 +163,7 @@ export default function Navbar() {
               {/* Logo/Brand */}
               <a
                 href="/"
-                className="group flex items-center space-x-2 pr-4 transition-transform duration-300 hover:scale-105 cursor-pointer"
+                className="group flex items-center space-x-2 pr-3 transition-transform duration-300 hover:scale-105 cursor-pointer"
               >
                 <div
                   className={`bg-gradient-to-br ${theme.gradient} p-2 rounded-full shadow-sm group-hover:shadow-md group-hover:rotate-12 transition-all duration-300`}
@@ -177,9 +178,9 @@ export default function Navbar() {
               </a>
 
               {/* Separator */}
-              <div className="w-px h-6 bg-gray-200 mx-2"></div>
+              <div className="w-px h-6 bg-gray-200 mx-1"></div>
 
-              {/* Nav Items Container with sliding active pill */}
+              {/* Nav Items Container */}
               <div
                 className="flex items-center space-x-1 relative"
                 onMouseLeave={() => setHoveredHref(null)}
@@ -193,7 +194,7 @@ export default function Navbar() {
                       key={item.label}
                       href={item.href}
                       onMouseEnter={() => setHoveredHref(item.href)}
-                      className={`relative flex items-center space-x-2 px-4.5 py-2 rounded-full transition-colors duration-200 select-none z-10 ${
+                      className={`relative flex items-center space-x-1.5 px-3.5 py-2 rounded-full transition-colors duration-200 select-none z-10 ${
                         isSelected
                           ? `${theme.textHover.replace("hover:", "")} font-semibold`
                           : "text-gray-600 hover:text-gray-900 font-medium"
@@ -224,61 +225,63 @@ export default function Navbar() {
               </div>
 
               {/* Separator */}
-              <div className="w-px h-6 bg-gray-200 mx-2"></div>
+              <div className="w-px h-6 bg-gray-200 mx-1"></div>
 
-              {/* CTA Button — Avatar jika login, Login Siswa jika belum */}
-              {siswaLogin ? (
-                <a
-                  href="/quiz"
-                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md hover:scale-105 active:scale-95 px-3 py-1.5 rounded-full transition-all duration-300 group"
-                >
-                  {/* Avatar */}
-                  <div className={`w-7 h-7 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0 group-hover:rotate-6 transition-transform duration-300`}>
-                    <span className="text-white font-extrabold text-[10px]">{siswaLogin.inisial}</span>
-                  </div>
-                  {/* Nama dipersingkat */}
-                  <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 max-w-[120px] truncate">
-                    {siswaLogin.nama.split(" ")[0]}
-                  </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-colors duration-200 flex-shrink-0" />
-                </a>
+              {/* User Account / Login Button */}
+              {isLoggedIn ? (
+                <div className="flex items-center gap-2">
+                  <a
+                    href="/profil"
+                    className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 font-extrabold px-3.5 py-1.5 rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-300 text-xs whitespace-nowrap"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-slate-900 text-yellow-400 flex items-center justify-center font-black text-[10px]">
+                      {profile?.nama ? profile.nama.charAt(0).toUpperCase() : "P"}
+                    </div>
+                    <span>Profil</span>
+                    {roleBadge && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-white/50 text-slate-900">
+                        {roleBadge.label}
+                      </span>
+                    )}
+                  </a>
+                  <button
+                    onClick={async () => {
+                      await logout();
+                      router.push("/");
+                    }}
+                    title="Keluar / Logout"
+                    className="p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
               ) : (
                 <a
-                  href="/quiz?from=nav"
-                  className={`bg-gradient-to-r ${theme.gradient} text-white px-5 py-2.5 rounded-full font-medium text-sm hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap flex items-center gap-2 group`}
+                  href="/auth/login"
+                  className={`bg-gradient-to-r ${theme.gradient} text-white px-4 py-2 rounded-full font-bold text-xs hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap flex items-center gap-1.5`}
                 >
-                  <LogIn className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-                  <span>Login</span>
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Masuk</span>
                 </a>
               )}
             </div>
 
-            {/* Mobile Content */}
-            <div className="md:hidden  flex items-center justify-between min-w-82 ">
-              {/* Logo */}
+            {/* Mobile Header */}
+            <div className="md:hidden flex items-center justify-between min-w-[280px]">
               <div className="flex items-center space-x-2">
-                <div
-                  className={`bg-gradient-to-br ${theme.gradient} p-2 rounded-full`}
-                >
+                <div className={`bg-gradient-to-br ${theme.gradient} p-2 rounded-full`}>
                   <Leaf className="w-5 h-5 text-white" />
                 </div>
-                <span
-                  className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}
-                >
+                <span className={`font-bold text-lg whitespace-nowrap bg-gradient-to-r ${theme.text} bg-clip-text text-transparent`}>
                   Cisarua 3
                 </span>
               </div>
 
-              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`p-2 rounded-full ${theme.bgHover} transition-colors duration-200`}
               >
-                {isOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
+                {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
           </div>
@@ -287,21 +290,17 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed  inset-0 z-40 md:hidden transition-all duration-300 ${
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
-        {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/20 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         ></div>
 
-        {/* Mobile Menu Panel */}
         <div
-          className={`absolute top-25 left-4 right-4 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border ${
+          className={`absolute top-24 left-4 right-4 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border ${
             theme.borderColor
           } p-6 transform transition-all duration-300 max-h-[80vh] overflow-y-auto ${
             isOpen ? "translate-y-0 scale-100" : "-translate-y-4 scale-95"
@@ -318,79 +317,82 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={`group flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
                     isActive
-                      ? `${theme.bg} ${theme.textHover.replace(
-                          "hover:",
-                          ""
-                        )} shadow-sm`
+                      ? `${theme.bg} ${theme.textHover.replace("hover:", "")} shadow-sm font-bold`
                       : `text-gray-700 ${theme.textHover} ${theme.bgHover}`
                   }`}
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                    animation: isOpen
-                      ? "slideInLeft 300ms ease-out forwards"
-                      : "none",
-                  }}
                 >
-                  <div
-                    className={`${
-                      isActive ? theme.bg : theme.bg
-                    } p-2 rounded-full transition-colors duration-200`}
-                  >
-                    <IconComponent
-                      className={`w-5 h-5 ${
-                        isActive
-                          ? theme.textHover.replace("hover:", "")
-                          : `text-${theme.primary}-600`
-                      }`}
-                    />
+                  <div className={`${isActive ? theme.bg : theme.bg} p-2 rounded-full transition-colors duration-200`}>
+                    <IconComponent className={`w-5 h-5 ${isActive ? theme.textHover.replace("hover:", "") : `text-${theme.primary}-600`}`} />
                   </div>
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium text-sm">{item.label}</span>
                 </a>
               );
             })}
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-100">
-            {siswaLogin ? (
-              <a
-                href="/quiz"
-                onClick={() => setIsOpen(false)}
-                className="w-full flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-3 rounded-2xl transition-all duration-200"
-              >
-                <div className={`w-10 h-10 ${siswaLogin.warnaBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0`}>
-                  <span className="text-white font-extrabold text-sm">{siswaLogin.inisial}</span>
+            {isLoggedIn ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-200">
+                  <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center font-bold text-slate-900 text-sm">
+                    {profile?.nama ? profile.nama.charAt(0).toUpperCase() : "U"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-800 text-sm truncate">{profile?.nama || "Pengguna"}</p>
+                    <p className="text-xs text-gray-500 truncate">{profile?.email || user?.email || ""}</p>
+                  </div>
+                  {roleBadge && (
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleBadge.bg}`}>
+                      {roleBadge.label}
+                    </span>
+                  )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-slate-800 text-sm truncate">{siswaLogin.nama}</p>
-                  <p className="text-xs text-gray-500">Lihat profil saya</p>
-                </div>
-                <ChevronDown className="w-4 h-4 text-gray-400 -rotate-90" />
-              </a>
+                <a
+                  href="/profil"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 font-extrabold py-3 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-md transition-all"
+                >
+                  <UserCircle2 className="w-4 h-4" /> Profil Saya
+                </a>
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setShowChangePassword(true);
+                  }}
+                  className="w-full bg-gray-50 hover:bg-gray-100 text-slate-700 font-semibold py-2.5 rounded-2xl text-xs flex items-center justify-center gap-2 border border-gray-200 transition-colors cursor-pointer"
+                >
+                  <KeyRound className="w-4 h-4 text-yellow-600" /> Ubah Kata Sandi
+                </button>
+                <button
+                  onClick={async () => {
+                    await logout();
+                    setIsOpen(false);
+                    router.push("/");
+                  }}
+                  className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 rounded-2xl text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" /> Keluar
+                </button>
+              </div>
             ) : (
               <a
-                href="/quiz?from=nav"
-                className={`w-full bg-gradient-to-r ${theme.gradient} text-white py-3 rounded-2xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2`}
+                href="/auth/login"
+                onClick={() => setIsOpen(false)}
+                className={`w-full bg-gradient-to-r ${theme.gradient} text-white py-3 rounded-2xl font-bold text-sm hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2`}
               >
                 <LogIn className="w-4 h-4" />
-                Login
+                Masuk ke Akun
               </a>
             )}
           </div>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+      {/* Modal Ubah Kata Sandi */}
+      <ModalUbahPassword
+        isOpen={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import PageTransition from "@/components/PageTransition";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Cisarua 3 - Edukasi Sampah untuk Semua",
@@ -29,12 +30,14 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body className="antialiased">
-        <LenisProvider>
-          <PageTransition>
-            {children}
-            <Analytics />
-          </PageTransition>
-        </LenisProvider>
+        <AuthProvider>
+          <LenisProvider>
+            <PageTransition>
+              {children}
+              <Analytics />
+            </PageTransition>
+          </LenisProvider>
+        </AuthProvider>
       </body>
     </html>
   );

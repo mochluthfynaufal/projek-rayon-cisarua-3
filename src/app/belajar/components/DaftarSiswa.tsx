@@ -1,29 +1,24 @@
 "use client";
+
 import { useState, useMemo, useEffect } from "react";
 import {
   Search, Filter, Users, ChevronDown, GraduationCap,
-  X, Trophy, Star, MapPin, Calendar, User, BookOpen,
+  X, Trophy, Star, MapPin, Calendar, User, Edit3, Loader2
 } from "lucide-react";
-import { daftarSiswa, type Jabatan, type Angkatan, type Siswa } from "@/lib/siswaData";
+import { daftarSiswa as fallbackDaftarSiswa, type Jabatan, type Angkatan, type Siswa } from "@/lib/siswaData";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { useAuth } from "@/context/AuthContext";
+import ModalEditProfilSiswa from "@/app/components/ModalEditProfilSiswa";
 
-// ─── Types (sama dengan ProfilSiswa) ─────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 interface Prestasi {
-  id: string;
+  id?: string;
   juara: string;
   tingkat: string;
   nama: string;
   tanggal: string;
 }
 interface ProfilData { bio: string; prestasi: Prestasi[] }
-
-function loadProfil(id: number): ProfilData {
-  if (typeof window === "undefined") return { bio: "", prestasi: [] };
-  try {
-    const raw = localStorage.getItem(`siswa_profil_${id}`);
-    if (raw) return JSON.parse(raw) as ProfilData;
-  } catch { /* ignore */ }
-  return { bio: "", prestasi: [] };
-}
 
 const juaraColor = (j: string) => {
   if (j.includes("1")) return "from-yellow-400 to-amber-500";
@@ -41,11 +36,7 @@ const jabatanColors: Record<Jabatan, string> = {
   "Anggota":     "bg-gray-100   text-gray-700   border-gray-300",
 };
 
-// ─── Sistem Warna Berdasarkan Tahun Angkatan (Siklis) ─────────────────────────
-// Urutan: Biru → Pink → Kuning → Biru → Pink → Kuning → ...
-// Alumni selalu Abu-abu
 const ANGKATAN_COLOR_CYCLE = [
-  // Biru
   {
     badge: "bg-blue-50 text-blue-700",
     border: "border-blue-200",
@@ -54,7 +45,6 @@ const ANGKATAN_COLOR_CYCLE = [
     text: "text-blue-600",
     avatar: "bg-blue-600",
   },
-  // Pink
   {
     badge: "bg-pink-50 text-pink-700",
     border: "border-pink-200",
@@ -63,7 +53,6 @@ const ANGKATAN_COLOR_CYCLE = [
     text: "text-pink-600",
     avatar: "bg-pink-600",
   },
-  // Kuning
   {
     badge: "bg-yellow-50 text-yellow-700",
     border: "border-yellow-200",
@@ -83,33 +72,62 @@ const ALUMNI_COLOR = {
   avatar: "bg-gray-500",
 } as const;
 
-// Kumpulkan semua tahun angkatan unik (non-alumni), urutkan ascending
-const uniqueTahunAngkatan = [...new Set(
-  daftarSiswa
-    .filter(s => s.angkatan !== "Alumni")
-    .map(s => s.tahunAngkatan)
-)].sort();
-
-// Map tahun angkatan → warna
-const tahunAngkatanColorMap = new Map(
-  uniqueTahunAngkatan.map((tahun, idx) => [tahun, ANGKATAN_COLOR_CYCLE[idx % ANGKATAN_COLOR_CYCLE.length]])
-);
-
-function getAngkatanColor(siswa: { angkatan: Angkatan; tahunAngkatan: string }) {
-  if (siswa.angkatan === "Alumni") return ALUMNI_COLOR;
-  return tahunAngkatanColorMap.get(siswa.tahunAngkatan) ?? ANGKATAN_COLOR_CYCLE[0];
-}
-
 const jabatanOptions: Jabatan[] = ["Ketua", "Wakil Ketua", "Sekretaris", "Bendahara", "Anggota"];
 const angkatanOptions: Angkatan[] = ["Kelas X", "Kelas XI", "Kelas XII (PKL)", "Alumni"];
 
 // ─── Modal Profil Siswa ───────────────────────────────────────────────────────
-function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) {
+function ModalProfil({
+  siswa,
+  onClose,
+  onOpenEdit,
+  canEdit,
+}: {
+  siswa: Siswa;
+  onClose: () => void;
+  onOpenEdit: () => void;
+  canEdit: boolean;
+}) {
   const [profil, setProfil] = useState<ProfilData>({ bio: "", prestasi: [] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setProfil(loadProfil(siswa.id));
-    // Tutup dengan Escape
+    const fetchProfil = async () => {
+      setLoading(true);
+      try {
+        if (isSupabaseConfigured) {
+          // 1. Ambil bio dari database siswa
+          const { data: sData } = await supabase
+            .from("siswa")
+            .select("bio")
+            .eq("id", siswa.id)
+            .single();
+
+          // 2. Ambil prestasi dari tabel prestasi
+          const { data: pData } = await supabase
+            .from("prestasi")
+            .select("*")
+            .eq("siswa_id", siswa.id)
+            .order("tanggal", { ascending: false });
+
+          setProfil({
+            bio: sData?.bio || "",
+            prestasi: (pData as Prestasi[]) || [],
+          });
+        } else {
+          const raw = localStorage.getItem(`siswa_profil_${siswa.id}`);
+          if (raw) {
+            setProfil(JSON.parse(raw) as ProfilData);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal load profil:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfil();
+
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -119,9 +137,13 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
     };
   }, [siswa.id, onClose]);
 
-  const angkColor = getAngkatanColor(siswa);
-  const formatTanggal = (iso: string) =>
-    new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  const formatTanggal = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+    } catch {
+      return iso;
+    }
+  };
 
   const sortedPrestasi = [...profil.prestasi].sort(
     (a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
@@ -132,10 +154,8 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
-      {/* Modal */}
       <div
         className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -146,7 +166,6 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
             className="absolute inset-0 opacity-20 rounded-t-3xl"
             style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }}
           />
-          {/* Tombol tutup */}
           <button
             onClick={onClose}
             className="absolute top-3 right-3 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
@@ -155,7 +174,7 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
           </button>
 
           {/* Avatar */}
-          <div className={`absolute -bottom-9 left-5 w-18 h-18 w-[72px] h-[72px] ${angkColor.avatar} rounded-2xl flex items-center justify-center shadow-xl border-4 border-white`}>
+          <div className="absolute -bottom-9 left-5 w-[72px] h-[72px] bg-yellow-500 rounded-2xl flex items-center justify-center shadow-xl border-4 border-white">
             {siswa.angkatan === "Alumni"
               ? <GraduationCap className="w-8 h-8 text-white" />
               : <span className="text-white font-extrabold text-xl">{siswa.inisial}</span>
@@ -165,11 +184,20 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
 
         {/* Konten */}
         <div className="px-5 pt-14 pb-6">
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div>
+              <h2 className="text-lg font-bold text-slate-800 leading-tight">{siswa.nama}</h2>
+              <p className="text-xs text-gray-500 font-mono mt-0.5">NIS: {siswa.nis}</p>
+            </div>
 
-          {/* Nama + NIS */}
-          <div className="mb-3">
-            <h2 className="text-lg font-bold text-slate-800 leading-tight">{siswa.nama}</h2>
-            <p className="text-xs text-gray-500 font-mono mt-0.5">NIS: {siswa.nis}</p>
+            {canEdit && (
+              <button
+                onClick={onOpenEdit}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold text-xs shadow-sm transition-all flex-shrink-0"
+              >
+                <Edit3 className="w-3.5 h-3.5" /> Edit Profil
+              </button>
+            )}
           </div>
 
           {/* Info grid */}
@@ -190,10 +218,10 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
 
           {/* Badges */}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${jabatanColors[siswa.jabatan]}`}>
+            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${jabatanColors[siswa.jabatan] || "bg-gray-100 text-gray-700 border-gray-300"}`}>
               {siswa.jabatan}
             </span>
-            <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${angkColor.badge}`}>
+            <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">
               {siswa.angkatan === "Alumni" ? "Alumni" : "Aktif"}
             </span>
           </div>
@@ -203,12 +231,15 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               <User className="w-3 h-3" /> Bio
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {profil.bio
-                ? profil.bio
-                : <span className="italic text-gray-400 text-xs">Siswa ini belum menambahkan bio.</span>
-              }
-            </p>
+            {loading ? (
+              <div className="py-2 text-center text-xs text-gray-400">
+                <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> Memuat bio...
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {profil.bio ? profil.bio : <span className="italic text-gray-400 text-xs">Siswa ini belum menambahkan bio.</span>}
+              </p>
+            )}
           </div>
 
           {/* Daftar Kejuaraan */}
@@ -217,20 +248,22 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
               <Trophy className="w-3 h-3" /> Daftar Kejuaraan ({sortedPrestasi.length})
             </div>
 
-            {sortedPrestasi.length === 0 ? (
+            {loading ? (
+              <div className="py-4 text-center text-xs text-gray-400">
+                <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> Memuat prestasi...
+              </div>
+            ) : sortedPrestasi.length === 0 ? (
               <div className="text-center py-6 bg-gray-50 rounded-xl border border-gray-100">
                 <Trophy className="w-8 h-8 text-gray-200 mx-auto mb-2" />
                 <p className="text-xs text-gray-400">Belum ada prestasi tercatat.</p>
               </div>
             ) : (
               <div className="space-y-2">
-                {sortedPrestasi.map((p) => (
-                  <div key={p.id} className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-3">
-                    {/* Medal */}
+                {sortedPrestasi.map((p, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-3">
                     <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${juaraColor(p.juara)} flex items-center justify-center flex-shrink-0 shadow-sm`}>
                       <Star className="w-4 h-4 text-white" />
                     </div>
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-slate-800 truncate">{p.nama}</p>
                       <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
@@ -258,20 +291,75 @@ function ModalProfil({ siswa, onClose }: { siswa: Siswa; onClose: () => void }) 
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DaftarSiswa() {
-  const [search, setSearch]               = useState("");
+  const { user, profile, role } = useAuth();
+
+  const [dataSiswaList, setDataSiswaList] = useState<Siswa[]>(fallbackDaftarSiswa);
+  const [loadingDb, setLoadingDb] = useState(false);
+  const [search, setSearch] = useState("");
   const [filterJabatan, setFilterJabatan] = useState<Jabatan | "Semua">("Semua");
   const [filterAngkatan, setFilterAngkatan] = useState<Angkatan | "Semua">("Semua");
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<Siswa | null>(null);
+  const [editingSiswa, setEditingSiswa] = useState<Siswa | null>(null);
 
   const LIMIT = 20;
 
+  // Load Data Siswa dari Supabase
+  const loadDataSiswa = async () => {
+    if (!isSupabaseConfigured) return;
+    setLoadingDb(true);
+    try {
+      const { data, error } = await supabase
+        .from("siswa")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) throw error;
+      if (data && data.length > 0) {
+        const mapped: Siswa[] = data.map((row) => ({
+          id: row.id,
+          nama: row.nama,
+          nis: row.nis,
+          jabatan: row.jabatan as Jabatan,
+          angkatan: row.angkatan as Angkatan,
+          tahunAngkatan: row.tahun_angkatan,
+          inisial: row.inisial || row.nama.substring(0, 2).toUpperCase(),
+          warnaBg: row.warna_bg || "bg-blue-600",
+        }));
+        setDataSiswaList(mapped);
+      }
+    } catch (err) {
+      console.error("Gagal mengambil data siswa dari Supabase:", err);
+    } finally {
+      setLoadingDb(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDataSiswa();
+  }, []);
+
+  const uniqueTahun = useMemo(() => {
+    return [...new Set(dataSiswaList.filter(s => s.angkatan !== "Alumni").map(s => s.tahunAngkatan))].sort();
+  }, [dataSiswaList]);
+
+  const colorMap = useMemo(() => {
+    return new Map(
+      uniqueTahun.map((thn, idx) => [thn, ANGKATAN_COLOR_CYCLE[idx % ANGKATAN_COLOR_CYCLE.length]])
+    );
+  }, [uniqueTahun]);
+
+  const getAngkatanStyle = (s: Siswa) => {
+    if (s.angkatan === "Alumni") return ALUMNI_COLOR;
+    return colorMap.get(s.tahunAngkatan) ?? ANGKATAN_COLOR_CYCLE[0];
+  };
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return daftarSiswa
+    return dataSiswaList
       .filter(s => {
-        const matchSearch   = s.nama.toLowerCase().includes(q) || s.nis.includes(q);
-        const matchJabatan  = filterJabatan  === "Semua" || s.jabatan  === filterJabatan;
+        const matchSearch = s.nama.toLowerCase().includes(q) || s.nis.includes(q);
+        const matchJabatan = filterJabatan === "Semua" || s.jabatan === filterJabatan;
         const matchAngkatan = filterAngkatan === "Semua" || s.angkatan === filterAngkatan;
         return matchSearch && matchJabatan && matchAngkatan;
       })
@@ -281,21 +369,36 @@ export default function DaftarSiswa() {
         if (aIsAlumni !== bIsAlumni) return aIsAlumni - bIsAlumni;
         return a.nama.localeCompare(b.nama, "id");
       });
-  }, [search, filterJabatan, filterAngkatan]);
+  }, [search, filterJabatan, filterAngkatan, dataSiswaList]);
 
   const displayed = showAll ? filtered : filtered.slice(0, LIMIT);
+
+  // Cek apakah user punya izin edit profil yang dipilih
+  const canEditSelected = (siswa: Siswa) => {
+    if (role === "admin" || role === "guru") return true;
+    if (profile?.siswa_id === siswa.id) return true;
+    return false;
+  };
 
   return (
     <section className="w-full py-20 px-4 bg-gray-50">
       <div className="max-w-6xl mx-auto">
 
         {/* Section Label */}
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-1 h-10 bg-yellow-500 rounded-full" />
-          <div>
-            <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Siswa</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Daftar Siswa Aktif</h2>
+        <div className="flex items-center justify-between gap-3 mb-10">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-10 bg-yellow-500 rounded-full" />
+            <div>
+              <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Siswa</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Daftar Siswa Rayon</h2>
+            </div>
           </div>
+
+          {loadingDb && (
+            <div className="flex items-center gap-1.5 text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-1.5 rounded-full">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Sinkronisasi Supabase
+            </div>
+          )}
         </div>
 
         {/* Search & Filter Bar */}
@@ -340,8 +443,8 @@ export default function DaftarSiswa() {
 
         {/* Result Count */}
         <p className="text-sm text-gray-500 mb-5">
-          Menampilkan <span className="font-bold text-slate-700">{filtered.length}</span> dari {daftarSiswa.length} siswa
-          <span className="ml-2 text-xs text-gray-400">· Klik kartu untuk lihat profil</span>
+          Menampilkan <span className="font-bold text-slate-700">{filtered.length}</span> dari {dataSiswaList.length} siswa
+          <span className="ml-2 text-xs text-gray-400">· Klik kartu untuk lihat & kelola profil</span>
         </p>
 
         {/* ID Card Grid */}
@@ -353,73 +456,74 @@ export default function DaftarSiswa() {
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {displayed.map(siswa => (
-                <button
-                  key={siswa.id}
-                  onClick={() => setSelected(siswa)}
-                  className={`bg-white border-2 ${getAngkatanColor(siswa).border} ${getAngkatanColor(siswa).hover} ${getAngkatanColor(siswa).glow} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer`}
-                >
-                  {/* Avatar */}
-                  <div className={`w-14 h-14 ${getAngkatanColor(siswa).avatar} rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
-                    {siswa.angkatan === "Alumni"
-                      ? <GraduationCap className="w-7 h-7 text-white" />
-                      : <span className="text-white font-extrabold text-base">{siswa.inisial}</span>
-                    }
-                  </div>
+              {displayed.map(siswa => {
+                const angkStyle = getAngkatanStyle(siswa);
+                const isMyProfile = profile?.siswa_id === siswa.id;
 
-                  {/* Nama */}
-                  <h4 className="font-bold text-slate-800 text-xs leading-tight mb-0.5 line-clamp-2">
-                    {siswa.nama}
-                  </h4>
-
-                  {/* NIS */}
-                  <p className="text-[10px] text-gray-400 font-mono mb-3">NIS. {siswa.nis}</p>
-
-                  {siswa.angkatan === "Alumni" ? (
-                    <>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-gray-100 text-gray-600 border-gray-300 mb-1">
-                        Alumni
+                return (
+                  <button
+                    key={siswa.id}
+                    onClick={() => setSelected(siswa)}
+                    className={`bg-white border-2 ${angkStyle.border} ${angkStyle.hover} ${angkStyle.glow} ${
+                      isMyProfile ? "ring-2 ring-yellow-400" : ""
+                    } rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative`}
+                  >
+                    {isMyProfile && (
+                      <span className="absolute top-2 right-2 bg-yellow-400 text-slate-900 text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-xs">
+                        Akun Anda
                       </span>
-                      <span className="text-[9px] text-gray-400 mt-1">{siswa.tahunAngkatan}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border mb-1.5 ${jabatanColors[siswa.jabatan]}`}>
-                        {siswa.jabatan}
-                      </span>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${getAngkatanColor(siswa).badge}`}>
-                        {siswa.angkatan}
-                      </span>
-                      <span className="text-[9px] text-gray-400 mt-1">{siswa.tahunAngkatan}</span>
-                    </>
-                  )}
+                    )}
 
-                  {/* Hint lihat profil */}
-                  <span className={`mt-2 text-[9px] ${getAngkatanColor(siswa).text} font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
-                    Lihat Profil →
-                  </span>
-                </button>
-              ))}
+                    {/* Avatar */}
+                    <div className={`w-14 h-14 ${angkStyle.avatar} rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                      {siswa.angkatan === "Alumni"
+                        ? <GraduationCap className="w-7 h-7 text-white" />
+                        : <span className="text-white font-extrabold text-base">{siswa.inisial}</span>
+                      }
+                    </div>
+
+                    {/* Nama */}
+                    <h4 className="font-bold text-slate-800 text-xs leading-tight mb-0.5 line-clamp-2">
+                      {siswa.nama}
+                    </h4>
+
+                    {/* NIS */}
+                    <p className="text-[10px] text-gray-400 font-mono mb-3">NIS. {siswa.nis}</p>
+
+                    {siswa.angkatan === "Alumni" ? (
+                      <>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-gray-100 text-gray-600 border-gray-300 mb-1">
+                          Alumni
+                        </span>
+                        <span className="text-[9px] text-gray-400 mt-1">{siswa.tahunAngkatan}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border mb-1.5 ${jabatanColors[siswa.jabatan] || "bg-gray-100 text-gray-700"}`}>
+                          {siswa.jabatan}
+                        </span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${angkStyle.badge}`}>
+                          {siswa.angkatan}
+                        </span>
+                        <span className="text-[9px] text-gray-400 mt-1">{siswa.tahunAngkatan}</span>
+                      </>
+                    )}
+
+                    <span className={`mt-2 text-[9px] ${angkStyle.text} font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
+                      Lihat Profil →
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Tombol See More */}
             {filtered.length > LIMIT && (
               <div className="mt-8 text-center">
                 <button
                   onClick={() => setShowAll(prev => !prev)}
                   className="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 font-semibold px-6 py-2.5 rounded-xl hover:bg-gray-50 hover:border-yellow-400 hover:text-yellow-700 transition-all duration-200 shadow-sm"
                 >
-                  {showAll ? (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 15l-6-6-6 6"/></svg>
-                      Sembunyikan
-                    </>
-                  ) : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M6 9l6 6 6-6"/></svg>
-                      Lihat Semua ({filtered.length - LIMIT} lainnya)
-                    </>
-                  )}
+                  {showAll ? "Sembunyikan" : `Lihat Semua (${filtered.length - LIMIT} lainnya)`}
                 </button>
               </div>
             )}
@@ -427,9 +531,30 @@ export default function DaftarSiswa() {
         )}
       </div>
 
-      {/* Modal Profil */}
+      {/* Modal Detail Profil */}
       {selected && (
-        <ModalProfil siswa={selected} onClose={() => setSelected(null)} />
+        <ModalProfil
+          siswa={selected}
+          canEdit={canEditSelected(selected)}
+          onOpenEdit={() => {
+            setEditingSiswa(selected);
+            setSelected(null);
+          }}
+          onClose={() => setSelected(null)}
+        />
+      )}
+
+      {/* Modal Edit Profil */}
+      {editingSiswa && (
+        <ModalEditProfilSiswa
+          siswa={editingSiswa}
+          initialBio=""
+          initialPrestasi={[]}
+          onClose={() => setEditingSiswa(null)}
+          onSaved={() => {
+            loadDataSiswa();
+          }}
+        />
       )}
     </section>
   );
