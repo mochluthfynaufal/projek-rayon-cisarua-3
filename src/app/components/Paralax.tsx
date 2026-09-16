@@ -55,17 +55,38 @@ export default function Paralax() {
           draggable={false}
         />
 
-        {/* Layer 2: Gedung tengah (di belakang teks hero) */}
+        {/* Layer 2: Awan (di belakang gedung, di depan background) */}
         <img
-          src="/wikrama/Gedung tengah.webp"
-          alt="Gedung Tengah"
-          className="absolute -bottom-10 sm:-bottom-14 md:-bottom-16 lg:-bottom-20 xl:-bottom-24 left-1/2 min-w-[880px] sm:min-w-[1050px] md:min-w-[1250px] lg:min-w-[1450px] xl:min-w-[1600px] max-w-none object-contain z-[20] select-none pointer-events-none"
-          data-speed="-1"
-          data-x="-50%"
+          src="/wikrama/awan.webp"
+          alt="Awan Depan"
+          className="absolute top-0 left-0 w-full object-cover sm:object-contain object-top z-[15] select-none pointer-events-none max-h-[45vh]"
+          data-speed="0.2"
+          data-x="0"
           draggable={false}
         />
 
-        {/* Layer 3: Seragam senin (di samping kiri menempel tanah) */}
+        {/* Layer 3: Gedung tengah (di BELAKANG gedung samping) */}
+        <img
+          src="/wikrama/Gedung tengah.webp"
+          alt="Gedung Tengah"
+          className="absolute left-0 w-full h-[81vh] object-contain object-bottom z-[17] select-none pointer-events-none"
+          style={{ bottom: "-100px" }}
+          data-speed="-0.25"
+          data-x="0"
+          draggable={false}
+        />
+
+        {/* Layer 4: Gedung samping (di DEPAN gedung tengah) */}
+        <img
+          src="/wikrama/gedungsamping.webp"
+          alt="Gedung Samping"
+          className="absolute bottom-0 left-0 w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] xl:h-[95vh] object-cover object-bottom z-[18] select-none pointer-events-none"
+          data-speed="-0.25"
+          data-x="0"
+          draggable={false}
+        />
+
+        {/* Layer 5: Seragam senin (di samping kiri menempel tanah) */}
         <img
           src="/wikrama/Seragam senin.webp"
           alt="Seragam Senin"
@@ -74,18 +95,7 @@ export default function Paralax() {
           data-x="0"
           draggable={false}
         />
-
-        {/* Layer 4: Awan menumpuk di layer paling depan atas */}
-        <img
-          src="/wikrama/awan.webp"
-          alt="Awan Depan"
-          className="absolute top-0 left-0 w-full object-cover sm:object-contain object-top z-[60] select-none pointer-events-none max-h-[45vh]"
-          data-speed="0.2"
-          data-x="0"
-          draggable={false}
-        />
       </div>
     </section>
   );
 }
-
