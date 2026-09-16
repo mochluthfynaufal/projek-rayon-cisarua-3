@@ -67,7 +67,7 @@ export default function Paralax() {
 
         {/* Layer 3: Gedung tengah (di BELAKANG gedung samping) */}
         <img
-          src="/wikrama/Gedung tengah.webp"
+          src="/wikrama/gedungtengah.webp"
           alt="Gedung Tengah"
           className="absolute left-0 w-full h-[81vh] object-contain object-bottom z-[17] select-none pointer-events-none"
           style={{ bottom: "-100px" }}
@@ -88,7 +88,7 @@ export default function Paralax() {
 
         {/* Layer 5: Seragam senin (di samping kiri menempel tanah) */}
         <img
-          src="/wikrama/Seragam senin.webp"
+          src="/wikrama/seragamsenin.webp"
           alt="Seragam Senin"
           className="absolute bottom-0 left-8 sm:left-14 md:left-20 lg:left-28 xl:left-36 w-[170px] sm:w-[210px] md:w-[260px] lg:w-[310px] object-contain z-[50] select-none pointer-events-none"
           data-speed="-0.4"
