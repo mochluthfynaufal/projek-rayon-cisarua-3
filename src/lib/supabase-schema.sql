@@ -44,6 +44,26 @@ CREATE TABLE IF NOT EXISTS public.prestasi (
   juara TEXT NOT NULL,
   tingkat TEXT NOT NULL,
   tanggal DATE NOT NULL,
+  penyelenggara TEXT DEFAULT NULL,
+  deskripsi TEXT DEFAULT NULL,
+  foto_url TEXT DEFAULT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.prestasi ADD COLUMN IF NOT EXISTS penyelenggara TEXT DEFAULT NULL;
+ALTER TABLE public.prestasi ADD COLUMN IF NOT EXISTS deskripsi TEXT DEFAULT NULL;
+ALTER TABLE public.prestasi ADD COLUMN IF NOT EXISTS foto_url TEXT DEFAULT NULL;
+
+-- 4. TABEL GALERI DOKUMENTASI RAYON
+CREATE TABLE IF NOT EXISTS public.galeri (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  judul TEXT NOT NULL,
+  kategori TEXT NOT NULL DEFAULT 'Kegiatan Rayon',
+  deskripsi TEXT DEFAULT NULL,
+  foto_url TEXT NOT NULL,
+  tanggal DATE NOT NULL DEFAULT CURRENT_DATE,
+  author_nama TEXT DEFAULT 'Pengurus Rayon',
+  created_by_role TEXT DEFAULT 'pengurus',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -151,8 +171,18 @@ CREATE POLICY "Public view prestasi" ON public.prestasi FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Owner, Admin, Guru can manage prestasi" ON public.prestasi;
 CREATE POLICY "Owner, Admin, Guru can manage prestasi" ON public.prestasi FOR ALL USING (
-  public.get_current_user_role() IN ('admin', 'guru') OR
+  public.get_current_user_role() IN ('admin', 'guru', 'pengurus', 'siswa') OR
   siswa_id IN (SELECT siswa_id FROM public.profiles WHERE id = auth.uid())
+);
+
+-- Policies GALERI
+ALTER TABLE public.galeri ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public view galeri" ON public.galeri;
+CREATE POLICY "Public view galeri" ON public.galeri FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Admin, Guru, Pengurus can manage galeri" ON public.galeri;
+CREATE POLICY "Admin, Guru, Pengurus can manage galeri" ON public.galeri FOR ALL USING (
+  public.get_current_user_role() IN ('admin', 'guru', 'pengurus')
 );
 
 -- Policies STRUKTUR PENGURUS

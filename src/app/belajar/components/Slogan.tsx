@@ -13,8 +13,7 @@ export default function Slogan() {
         {/* Accent line */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <div className="h-px w-16 bg-yellow-500" />
-          {/* PLACEHOLDER — ganti label jika perlu */}
-          <span className="text-yellow-500 text-xs font-bold uppercase tracking-[0.3em]">Motto Kelas</span>
+          <span className="text-yellow-500 text-xs font-bold uppercase tracking-[0.3em]">Motto Rayon</span>
           <div className="h-px w-16 bg-yellow-500" />
         </div>
 
@@ -25,25 +24,24 @@ export default function Slogan() {
           </div>
         </div>
 
-        {/* PLACEHOLDER — Ganti dengan motto/slogan kelas asli */}
+        {/* Motto / Slogan Rayon */}
         <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-          "Satu Kelas,{" "}
+          "Satu Rayon,{" "}
           <span className="text-yellow-400">Satu Keluarga"</span>
         </h2>
 
-        {/* PLACEHOLDER — Ganti dengan penjelasan motto/visi kelas */}
+        {/* Penjelasan visi & misi rayon */}
         <p className="text-slate-300 text-lg leading-relaxed max-w-xl mx-auto mb-10">
           Kebersamaan, kedisiplinan, dan komitmen untuk berprestasi adalah nilai
           yang kami pegang teguh di setiap langkah perjalanan akademik kami di
           SMK Wikrama Bogor.
         </p>
 
-        {/* Info kelas */}
+        {/* Info rayon */}
         <div className="inline-flex items-center gap-4 border border-white/10 bg-white/5 backdrop-blur-sm rounded-2xl px-6 py-3">
           <div className="text-center">
-            {/* PLACEHOLDER — ganti nama kelas */}
             <p className="text-white font-bold text-sm">SMK Wikrama Bogor</p>
-            <p className="text-slate-400 text-xs">Teknik Komputer dan Jaringan</p> {/* PLACEHOLDER */}
+            <p className="text-slate-400 text-xs">Rayon Cisarua 3</p>
           </div>
           <div className="h-8 w-px bg-white/20" />
           <div className="text-center">

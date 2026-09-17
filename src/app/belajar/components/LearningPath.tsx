@@ -25,7 +25,7 @@ const tahapAkademik: TahapAkademik[] = [
     status: "selesai",
     jumlahSiswa: 36, // PLACEHOLDER
     ikon: BookOpen,
-    pencapaian: ["MPLS & Orientasi Sekolah", "Dasar Kompetensi Kejuruan", "Pembentukan Pengurus Kelas", "Penilaian Akhir Tahun"],
+    pencapaian: ["MPLS & Orientasi Sekolah", "Dasar Kompetensi Kejuruan", "Pembentukan Pengurus Rayon", "Penilaian Akhir Tahun"],
   },
   {
     id: 2,
@@ -81,7 +81,7 @@ export default function LearningPath() {
           <div className="w-1 h-10 bg-yellow-500 rounded-full" />
           <div>
             <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Perjalanan Akademik</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Tahapan Pendidikan Kelas</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Tahapan Angkatan Rayon</h2>
           </div>
         </div>
 

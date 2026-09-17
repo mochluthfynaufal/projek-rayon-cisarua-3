@@ -14,7 +14,7 @@ const defaultPengurusData: PengurusItem[] = [
     inisial: "KR",
     siswa_id: 8, // Muhamad Azwan Muzaki (TJKT)
     tugas: [
-      "Memimpin dan mengkoordinir seluruh kegiatan rayon dan kelas",
+      "Memimpin dan mengkoordinir seluruh kegiatan rayon",
       "Menjadi penghubung utama antara anggota dengan Pembimbing Siswa (PS)",
       "Memimpin musyawarah, evaluasi, dan pembagian tugas rayon",
       "Bertanggung jawab atas ketertiban dan kehadiran rayon",
@@ -59,7 +59,7 @@ const defaultPengurusData: PengurusItem[] = [
 ];
 
 const aksenMap: Record<string, { card: string; icon: string; badge: string; initial: string; iconComp: any }> = {
-  "Ketua Rayon / Kelas": {
+  "Ketua Rayon": {
     card: "border-yellow-300 bg-yellow-50/70",
     icon: "bg-yellow-500",
     badge: "bg-yellow-100 text-yellow-800",
@@ -173,7 +173,7 @@ export default function StrukturKelas() {
         {/* Kartu Pengurus — ID Card Style Real Data */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {pengurus.map((p) => {
-            const aksen = aksenMap[p.peran] || aksenMap["Ketua Rayon / Kelas"];
+            const aksen = aksenMap[p.peran] || aksenMap["Ketua Rayon"];
             const Icon = aksen.iconComp;
             const assignedSiswa = siswaList.find((s) => s.id === p.siswa_id);
 

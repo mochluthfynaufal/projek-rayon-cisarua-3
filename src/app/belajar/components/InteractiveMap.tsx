@@ -41,7 +41,7 @@ const daftarAlumni: Alumni[] = [
     id: 4, nama: "Alumni D", jurusan: "Teknik Komputer dan Jaringan",
     tahunLulus: 2024, status: "Bekerja",
     tempat: "Instansi Pemerintah — Dinas Kominfo", // PLACEHOLDER
-    testimoni: "Wali kelas dan guru-guru di SMK Wikrama selalu mendorong kami untuk menjadi yang terbaik. Sangat berterima kasih!", // PLACEHOLDER
+    testimoni: "Pembimbing siswa dan guru-guru di SMK Wikrama selalu mendorong kami untuk menjadi yang terbaik. Sangat berterima kasih!",
     inisial: "D", warnaAvatar: "bg-purple-600",
   },
   {
@@ -92,7 +92,7 @@ export default function InteractiveMap() {
           <div className="w-1 h-10 bg-yellow-500 rounded-full" />
           <div>
             <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Lulusan</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Alumni Kelas Kami</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Alumni Rayon Kami</h2>
           </div>
         </div>
 

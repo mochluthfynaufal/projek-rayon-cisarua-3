@@ -18,13 +18,44 @@ interface ModalEditPiketProps {
   onSaved: (updatedJadwal: PiketDayData[]) => void;
 }
 
+export function deduplicatePetugasList(
+  petugas: { id?: number; siswa_id: number; nama: string }[]
+): { id?: number; siswa_id: number; nama: string }[] {
+  const seenIds = new Set<number>();
+  const seenNames = new Set<string>();
+  const result: { id?: number; siswa_id: number; nama: string }[] = [];
+
+  for (const p of petugas) {
+    const cleanName = (p.nama || "").trim().toLowerCase();
+    const sId = Number(p.siswa_id);
+
+    if (sId && seenIds.has(sId)) continue;
+    if (cleanName && seenNames.has(cleanName)) continue;
+
+    if (sId) seenIds.add(sId);
+    if (cleanName) seenNames.add(cleanName);
+
+    result.push({
+      ...p,
+      siswa_id: sId,
+      nama: p.nama || "Siswa",
+    });
+  }
+  return result;
+}
+
 export default function ModalEditPiket({
   daftarSiswa,
   currentJadwal,
   onClose,
   onSaved,
 }: ModalEditPiketProps) {
-  const [jadwal, setJadwal] = useState<PiketDayData[]>(currentJadwal);
+  const [jadwal, setJadwal] = useState<PiketDayData[]>(() =>
+    currentJadwal.map((d) => ({
+      ...d,
+      petugas: deduplicatePetugasList(d.petugas || []),
+    }))
+  );
   const [activeDayIndex, setActiveDayIndex] = useState(1);
   const [selectedSiswaId, setSelectedSiswaId] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +70,13 @@ export default function ModalEditPiket({
     if (!siswa) return;
 
     // Cek apakah sudah ada di hari ini
-    if (activeDay.petugas.some((p) => p.siswa_id === sId)) {
+    if (
+      activeDay.petugas.some(
+        (p) =>
+          p.siswa_id === sId ||
+          p.nama.trim().toLowerCase() === siswa.nama.trim().toLowerCase()
+      )
+    ) {
       setErrorMsg(`${siswa.nama} sudah terdaftar di hari ${activeDay.hari}.`);
       return;
     }
@@ -48,9 +85,10 @@ export default function ModalEditPiket({
     setJadwal((prev) =>
       prev.map((d) => {
         if (d.dayIndex === activeDayIndex) {
+          const updated = [...d.petugas, { siswa_id: sId, nama: siswa.nama }];
           return {
             ...d,
-            petugas: [...d.petugas, { siswa_id: sId, nama: siswa.nama }],
+            petugas: deduplicatePetugasList(updated),
           };
         }
         return d;
@@ -59,13 +97,13 @@ export default function ModalEditPiket({
     setSelectedSiswaId("");
   };
 
-  const handleRemovePetugas = (siswaId: number) => {
+  const handleRemovePetugas = (indexToRemove: number) => {
     setJadwal((prev) =>
       prev.map((d) => {
         if (d.dayIndex === activeDayIndex) {
           return {
             ...d,
-            petugas: d.petugas.filter((p) => p.siswa_id !== siswaId),
+            petugas: d.petugas.filter((_, idx) => idx !== indexToRemove),
           };
         }
         return d;
@@ -78,13 +116,18 @@ export default function ModalEditPiket({
     setErrorMsg(null);
 
     try {
+      const cleanJadwal = jadwal.map((d) => ({
+        ...d,
+        petugas: deduplicatePetugasList(d.petugas),
+      }));
+
       if (isSupabaseConfigured) {
         // Hapus data jadwal piket lama
         await supabase.from("jadwal_piket").delete().neq("id", 0);
 
-        // Insert jadwal baru
+        // Insert jadwal baru tanpa duplikasi
         const insertPayload: any[] = [];
-        jadwal.forEach((day) => {
+        cleanJadwal.forEach((day) => {
           day.petugas.forEach((p, idx) => {
             insertPayload.push({
               hari: day.hari,
@@ -100,10 +143,10 @@ export default function ModalEditPiket({
           if (error) throw error;
         }
       } else {
-        localStorage.setItem("custom_jadwal_piket", JSON.stringify(jadwal));
+        localStorage.setItem("custom_jadwal_piket", JSON.stringify(cleanJadwal));
       }
 
-      onSaved(jadwal);
+      onSaved(cleanJadwal);
       onClose();
     } catch (err: any) {
       console.error(err);
@@ -183,9 +226,10 @@ export default function ModalEditPiket({
                 <option value="">-- Pilih Siswa --</option>
                 {daftarSiswa
                   .filter((s) => s.angkatan !== "Alumni")
+                  .filter((s, index, self) => index === self.findIndex((t) => t.id === s.id))
                   .sort((a, b) => a.nama.localeCompare(b.nama))
                   .map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={`siswa-opt-${s.id}`} value={s.id}>
                       {s.nama} ({s.angkatan})
                     </option>
                   ))}
@@ -215,7 +259,7 @@ export default function ModalEditPiket({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
                 {activeDay.petugas.map((p, idx) => (
                   <div
-                    key={p.siswa_id}
+                    key={`${p.siswa_id}-${p.id ?? idx}-${idx}`}
                     className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 shadow-sm"
                   >
                     <div className="flex items-center gap-2">
@@ -226,7 +270,7 @@ export default function ModalEditPiket({
                     </div>
                     <button
                       type="button"
-                      onClick={() => handleRemovePetugas(p.siswa_id)}
+                      onClick={() => handleRemovePetugas(idx)}
                       className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

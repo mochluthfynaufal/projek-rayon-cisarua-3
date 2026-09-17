@@ -49,10 +49,10 @@ export default function BelajarPage() {
       <Hero {...belajarHeroProps} />
       {/* ========================================================= */}
 
-      {/* Profil Wali Kelas */}
+      {/* Profil Pembimbing Rayon */}
       <ProfilWaliKelas />
 
-      {/* Struktur Pengurus Kelas */}
+      {/* Struktur Pengurus Rayon */}
       <StrukturKelas />
 
       {/* Daftar Siswa — 3 Angkatan */}

@@ -165,7 +165,7 @@ export default function LoginSiswa({ onLogin }: Props) {
             <span>💡</span> Lupa NIS?
           </p>
           <p className="text-xs text-amber-700 leading-relaxed">
-            NIS kamu bisa dilihat di kartu pelajar, buku rapor, atau tanyakan ke wali kelas.
+            NIS kamu bisa dilihat di kartu pelajar, buku rapor, atau tanyakan ke pembimbing siswa (PS).
           </p>
         </div>
       </div>

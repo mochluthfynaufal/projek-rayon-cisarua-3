@@ -207,7 +207,7 @@ function ModalProfil({
               <p className="text-xs font-bold text-slate-700">{siswa.jabatan}</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-2.5 text-center border border-gray-100">
-              <p className="text-[10px] text-gray-400 mb-0.5">Kelas</p>
+              <p className="text-[10px] text-gray-400 mb-0.5">Tingkat</p>
               <p className="text-xs font-bold text-slate-700">{siswa.angkatan}</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-2.5 text-center border border-gray-100">

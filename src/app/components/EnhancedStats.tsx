@@ -8,10 +8,10 @@ const statsData = [
     icon: <Users className="w-8 h-8" />,
     value: `${jumlahSiswaAktif}`,
     label: "Siswa Aktif",
-    description: `Total ${jumlahSiswaAktif} anggota gabungan dari kelas 10, 11, dan 12 yang solid dan kompak.`,
+    description: `Total ${jumlahSiswaAktif} anggota aktif rayon Cisarua 3 yang solid dan kompak.`,
     color: "emerald",
     growth: "Active",
-    detail: "Terdiri dari angkatan kelas 10, 11, dan 12 yang aktif berorganisasi.",
+    detail: "Terdiri dari angkatan Kelas X, XI, dan XII yang aktif berorganisasi.",
   },
   {
     icon: <ShieldCheck className="w-8 h-8" />,

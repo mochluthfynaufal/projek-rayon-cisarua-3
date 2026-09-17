@@ -142,9 +142,10 @@ export default function ModalEditPengurus({
                     <option value="">-- Pilih Siswa --</option>
                     {daftarSiswa
                       .filter((s) => s.angkatan !== "Alumni")
+                      .filter((s, index, self) => index === self.findIndex((t) => t.id === s.id))
                       .sort((a, b) => a.nama.localeCompare(b.nama))
                       .map((s) => (
-                        <option key={s.id} value={s.id}>
+                        <option key={`pengurus-opt-${s.id}`} value={s.id}>
                           {s.nama} ({s.angkatan} - {s.nis})
                         </option>
                       ))}

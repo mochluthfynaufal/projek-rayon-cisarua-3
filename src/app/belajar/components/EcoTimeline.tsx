@@ -112,7 +112,7 @@ export default function EcoTimeline() {
           <div className="w-1 h-10 bg-yellow-500 rounded-full" />
           <div>
             <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Linimasa</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Sejarah Kelas Kami</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Sejarah Rayon Kami</h2>
           </div>
         </div>
 

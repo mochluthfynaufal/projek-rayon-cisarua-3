@@ -22,19 +22,18 @@ export default function CTA() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-5 leading-tight">
-            Kenali Keluarga Besar<br />Kelas Kami
+            Kenali Keluarga Besar<br />Rayon Kami
           </h2>
 
-          {/* PLACEHOLDER — sesuaikan teks CTA dengan konteks kelas asli */}
           <p className="text-white/90 text-lg max-w-2xl mx-auto leading-relaxed">
-            Dari wali kelas yang berdedikasi, siswa aktif yang bersemangat, hingga alumni yang telah membuktikan diri di dunia kerja dan perguruan tinggi.
+            Dari pembimbing siswa yang berdedikasi, siswa aktif yang bersemangat, hingga alumni yang telah membuktikan diri di dunia kerja dan perguruan tinggi.
           </p>
         </div>
 
         {/* CTA Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { label: "Wali Kelas", sublabel: "Mohamad Rizal, S.Pd.", ikon: GraduationCap, bg: "bg-white/20 hover:bg-white/30" },
+            { label: "Pembimbing Siswa", sublabel: "Mohamad Rizal, S.Pd.", ikon: GraduationCap, bg: "bg-white/20 hover:bg-white/30" },
             { label: "Siswa Aktif", sublabel: "3 Angkatan — 103 Siswa", ikon: Users, bg: "bg-white text-yellow-600 hover:bg-yellow-50" }, // PLACEHOLDER
             { label: "Alumni", sublabel: "72 Alumni Membanggakan", ikon: ArrowRight, bg: "bg-white/20 hover:bg-white/30" }, // PLACEHOLDER
           ].map((card, i) => {

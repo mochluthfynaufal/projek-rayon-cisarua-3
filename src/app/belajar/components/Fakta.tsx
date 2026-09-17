@@ -72,7 +72,7 @@ export default function Fakta() {
           <div className="w-1 h-10 bg-yellow-500 rounded-full" />
           <div>
             <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Fakta & Data</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Fakta Menarik Kelas Kami</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Fakta Menarik Rayon Kami</h2>
           </div>
         </div>
 
@@ -114,10 +114,9 @@ export default function Fakta() {
           </div>
           <div className="text-center md:text-left">
             <p className="text-white font-bold mb-0.5">Tahukah Kamu?</p>
-            {/* PLACEHOLDER — ganti dengan fakta unik kelas yang asli */}
             <p className="text-slate-400 text-sm">
-              Kelas kami telah menghasilkan alumni yang kini bekerja di berbagai perusahaan IT
-              dan berkuliah di perguruan tinggi negeri ternama di Indonesia.
+              Rayon kami telah menghasilkan alumni yang kini bekerja di berbagai perusahaan dan instansi
+              serta berkuliah di perguruan tinggi ternama di Indonesia.
             </p>
           </div>
         </div>

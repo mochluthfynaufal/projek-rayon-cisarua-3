@@ -18,7 +18,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
   // Get theme colors based on pathname
   const getThemeColors = () => {
     if (pathname === "/belajar") return { from: "#facc15", to: "#ca8a04" }; // yellow-400 to yellow-600
-    if (pathname === "/komunitas") return { from: "#60a5fa", to: "#2563eb" }; // blue-400 to blue-600
+    if (pathname === "/galeri" || pathname === "/komunitas") return { from: "#f59e0b", to: "#059669" }; // amber-500 to emerald-600
     if (pathname === "/quiz") return { from: "#10b981", to: "#0d9488" }; // emerald-500 to teal-600
     if (pathname === "/contact") return { from: "#ef4444", to: "#dc2626" }; // red-500 to red-600
     return { from: "#34d399", to: "#059669" }; // emerald-400 to emerald-600 (Beranda)
@@ -26,15 +26,15 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
   const getAccentColor = () => {
     if (pathname === "/belajar") return "text-yellow-500";
-    if (pathname === "/komunitas") return "text-blue-500";
+    if (pathname === "/galeri" || pathname === "/komunitas") return "text-amber-500";
     if (pathname === "/quiz") return "text-emerald-500";
     if (pathname === "/contact") return "text-red-500";
     return "text-emerald-500";
   };
 
   const getPageName = () => {
-    if (pathname === "/belajar") return "Kelas";
-    if (pathname === "/komunitas") return "Komunitas";
+    if (pathname === "/belajar") return "Rayon";
+    if (pathname === "/galeri" || pathname === "/komunitas") return "Galeri & Prestasi";
     if (pathname === "/quiz") return "Login Siswa";
     if (pathname === "/contact") return "Kontak";
     if (pathname === "/") return "Beranda";

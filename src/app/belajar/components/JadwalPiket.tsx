@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Bell, CheckCircle, Settings, Users, Loader2 } from "lucide-react";
-import { daftarSiswa as fallbackDaftarSiswa, Siswa } from "@/lib/siswaData";
+import { useState, useEffect, useMemo } from "react";
+import { Settings, Users, Filter, CalendarCheck, Sparkles } from "lucide-react";
+import { daftarSiswa as fallbackDaftarSiswa, Siswa, Angkatan } from "@/lib/siswaData";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
-import ModalEditPiket, { PiketDayData } from "@/app/components/ModalEditPiket";
+import ModalEditPiket, { PiketDayData, deduplicatePetugasList } from "@/app/components/ModalEditPiket";
 
 const initialDefaultJadwal: PiketDayData[] = [
   {
@@ -76,18 +76,36 @@ const initialDefaultJadwal: PiketDayData[] = [
   },
 ];
 
+const angkatanOptions = [
+  { key: "Semua", label: "Semua Angkatan" },
+  { key: "Kelas X", label: "Kelas X" },
+  { key: "Kelas XI", label: "Kelas XI" },
+  { key: "Kelas XII (PKL)", label: "Kelas XII (PKL)" },
+];
+
 export default function JadwalPiket() {
   const { role } = useAuth();
-  const [jadwal, setJadwal] = useState<PiketDayData[]>(initialDefaultJadwal);
+  const [jadwal, setJadwal] = useState<PiketDayData[]>(() =>
+    initialDefaultJadwal.map((d) => ({
+      ...d,
+      petugas: deduplicatePetugasList(d.petugas),
+    }))
+  );
   const [siswaList, setSiswaList] = useState<Siswa[]>(fallbackDaftarSiswa);
+  const [selectedAngkatan, setSelectedAngkatan] = useState<string>("Semua");
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [hariIniIndex, setHariIniIndex] = useState<number | null>(null);
-  const [hariAktifId, setHariAktifId] = useState<number | null>(null);
-  const [alert, setAlert] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Hak akses ubah piket: Pengurus, Guru/PS, Admin
   const canManagePiket = role === "pengurus" || role === "guru" || role === "admin";
+
+  // Map Siswa untuk lookup angkatan cepat
+  const siswaMap = useMemo(() => {
+    const map = new Map<number, Siswa>();
+    siswaList.forEach((s) => map.set(s.id, s));
+    return map;
+  }, [siswaList]);
 
   const fetchJadwalPiket = async () => {
     setLoading(true);
@@ -106,7 +124,10 @@ export default function JadwalPiket() {
             inisial: s.inisial || s.nama.substring(0, 2).toUpperCase(),
             warnaBg: s.warna_bg || "bg-blue-600",
           }));
-          setSiswaList(mappedSiswa);
+          const uniqueSiswa = mappedSiswa.filter(
+            (s, idx, arr) => idx === arr.findIndex((t) => t.id === s.id)
+          );
+          setSiswaList(uniqueSiswa);
         }
 
         // Ambil data jadwal piket
@@ -127,20 +148,34 @@ export default function JadwalPiket() {
           pData.forEach((row: any) => {
             const dayIdx = row.day_index;
             if (daysMap[dayIdx]) {
+              const name = row.siswa?.nama || "Siswa";
+              const sId = row.siswa_id;
               daysMap[dayIdx].petugas.push({
                 id: row.id,
-                siswa_id: row.siswa_id,
-                nama: row.siswa?.nama || "Siswa",
+                siswa_id: sId,
+                nama: name,
               });
             }
           });
 
-          setJadwal(Object.values(daysMap));
+          const cleanJadwal = Object.values(daysMap).map((d) => ({
+            ...d,
+            petugas: deduplicatePetugasList(d.petugas),
+          }));
+
+          setJadwal(cleanJadwal);
         }
       } else {
         const local = localStorage.getItem("custom_jadwal_piket");
         if (local) {
-          setJadwal(JSON.parse(local));
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed)) {
+            const cleanParsed = parsed.map((d: PiketDayData) => ({
+              ...d,
+              petugas: deduplicatePetugasList(d.petugas || []),
+            }));
+            setJadwal(cleanParsed);
+          }
         }
       }
     } catch (err) {
@@ -156,67 +191,95 @@ export default function JadwalPiket() {
     fetchJadwalPiket();
   }, []);
 
-  const handleCekHariIni = () => {
-    if (hariIniIndex === null) return;
-    const hari = jadwal.find((j) => j.dayIndex === hariIniIndex);
-    if (hari && hari.petugas.length > 0) {
-      setHariAktifId(hari.dayIndex);
-      const names = hari.petugas.map((p) => p.nama).join(", ");
-      setAlert(`Hari ini ${hari.hari} — Petugas: ${names}`);
-    } else {
-      setHariAktifId(null);
-      setAlert("Hari ini adalah hari libur (Sabtu/Minggu). Tidak ada jadwal piket. 🎉");
-    }
-    setTimeout(() => setAlert(null), 7000);
-  };
-
   const isToday = (dayIndex: number) => hariIniIndex === dayIndex;
-  const isAktif = (dayIndex: number) => hariAktifId === dayIndex;
 
-  const maxPetugas = Math.max(1, ...jadwal.map((j) => j.petugas.length));
+  // Jadwal yang difilter berdasarkan angkatan yang dipilih
+  const filteredJadwal = useMemo(() => {
+    return jadwal.map((day) => {
+      const cleanPetugas = deduplicatePetugasList(day.petugas);
+      const filtered =
+        selectedAngkatan === "Semua"
+          ? cleanPetugas
+          : cleanPetugas.filter((p) => {
+              const siswa =
+                siswaMap.get(p.siswa_id) ||
+                siswaList.find(
+                  (s) => s.nama.trim().toLowerCase() === p.nama.trim().toLowerCase()
+                );
+              return siswa?.angkatan === selectedAngkatan;
+            });
+      return {
+        ...day,
+        petugas: filtered,
+      };
+    });
+  }, [jadwal, selectedAngkatan, siswaMap, siswaList]);
+
+  const maxPetugas = Math.max(1, ...filteredJadwal.map((j) => j.petugas.length));
+
+  // Total petugas saat ini
+  const totalPetugasFiltered = useMemo(() => {
+    return filteredJadwal.reduce((acc, curr) => acc + curr.petugas.length, 0);
+  }, [filteredJadwal]);
 
   return (
     <section className="w-full py-20 px-4 bg-white">
       <div className="max-w-6xl mx-auto">
-
-        {/* Section Label + Tombol */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-10">
+        {/* Section Header + Controls */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-10 bg-yellow-500 rounded-full" />
+            <div className="w-1.5 h-12 bg-yellow-500 rounded-full" />
             <div>
-              <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">Jadwal</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">Jadwal Piket Kebersihan</h2>
+              <p className="text-xs font-semibold text-yellow-600 uppercase tracking-widest">
+                Jadwal
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+                Jadwal Piket Kebersihan
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Menampilkan {totalPetugasFiltered} petugas piket{" "}
+                {selectedAngkatan !== "Semua" ? `(${selectedAngkatan})` : "seluruh angkatan"}
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-start sm:self-auto">
+          <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
             {canManagePiket && (
               <button
                 onClick={() => setIsEditOpen(true)}
-                className="flex items-center gap-2 bg-slate-900 text-white font-bold px-4 py-2.5 rounded-xl text-xs hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
+                className="flex items-center gap-2 bg-slate-900 text-white font-bold px-4 py-2.5 rounded-2xl text-xs hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
               >
                 <Settings className="w-4 h-4 text-yellow-400" />
                 Atur Jadwal Piket
               </button>
             )}
 
-            <button
-              onClick={handleCekHariIni}
-              className="flex items-center gap-2 bg-yellow-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs hover:bg-yellow-600 transition-colors shadow-sm cursor-pointer"
-            >
-              <Bell className="w-4 h-4" />
-              Cek Piket Hari Ini
-            </button>
+            {/* Sortiran / Filter by Angkatan */}
+            <div className="flex items-center bg-gray-100 p-1.5 rounded-2xl border border-gray-200 gap-1 overflow-x-auto">
+              <span className="text-[11px] font-bold text-slate-500 px-2 flex items-center gap-1.5 hidden sm:flex">
+                <Filter className="w-3.5 h-3.5 text-yellow-600" />
+                Filter:
+              </span>
+              {angkatanOptions.map((ang) => {
+                const isActive = selectedAngkatan === ang.key;
+                return (
+                  <button
+                    key={ang.key}
+                    type="button"
+                    onClick={() => setSelectedAngkatan(ang.key)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                      isActive
+                        ? "bg-yellow-500 text-slate-900 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-gray-200/60"
+                    }`}
+                  >
+                    {ang.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-
-        {/* Alert */}
-        {alert && (
-          <div className="mb-8 flex items-start gap-3 bg-green-50 border border-green-200 rounded-2xl px-5 py-4 shadow-sm">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <p className="text-green-800 text-sm font-medium leading-relaxed">{alert}</p>
-          </div>
-        )}
 
         {/* TABEL JADWAL — Senin–Jumat */}
         <div className="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden mb-8">
@@ -227,31 +290,26 @@ export default function JadwalPiket() {
                   <th className="bg-slate-900 text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-4 text-left w-36 sticky left-0 z-10 border-b border-slate-800">
                     Petugas
                   </th>
-                  {jadwal.map((col) => {
+                  {filteredJadwal.map((col) => {
                     const today = isToday(col.dayIndex);
-                    const aktif = isAktif(col.dayIndex);
                     return (
                       <th
-                        key={col.dayIndex}
+                        key={`th-${col.dayIndex}`}
                         className={`text-center px-4 py-4 font-bold text-sm transition-colors border-b border-slate-800 ${
-                          aktif
-                            ? "bg-yellow-500 text-slate-900"
-                            : today
-                            ? "bg-yellow-400/90 text-slate-900"
-                            : "bg-slate-900 text-white"
+                          today ? "bg-yellow-500 text-slate-900" : "bg-slate-900 text-white"
                         }`}
                       >
                         <div className="flex flex-col items-center gap-1">
                           <span>{col.hari}</span>
-                          {today && (
-                            <span
-                              className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                                aktif ? "bg-slate-900 text-white" : "bg-slate-900 text-yellow-400"
-                              }`}
-                            >
-                              Hari Ini
-                            </span>
-                          )}
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              today
+                                ? "bg-slate-900 text-yellow-400"
+                                : "bg-white/10 text-gray-300"
+                            }`}
+                          >
+                            {today ? "Hari Ini" : `${col.petugas.length} Siswa`}
+                          </span>
                         </div>
                       </th>
                     );
@@ -261,39 +319,59 @@ export default function JadwalPiket() {
 
               <tbody>
                 {Array.from({ length: maxPetugas }).map((_, rowIndex) => (
-                  <tr key={rowIndex} className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                  <tr
+                    key={`tr-${rowIndex}`}
+                    className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50/50"}
+                  >
                     <td className="px-5 py-3.5 sticky left-0 bg-inherit border-r border-gray-100">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-slate-800 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                           {rowIndex + 1}
                         </div>
-                        <span className="text-xs text-gray-400 font-medium">Petugas {rowIndex + 1}</span>
+                        <span className="text-xs text-gray-400 font-medium">
+                          Petugas {rowIndex + 1}
+                        </span>
                       </div>
                     </td>
 
-                    {jadwal.map((col) => {
+                    {filteredJadwal.map((col) => {
                       const petugasObj = col.petugas[rowIndex] ?? null;
-                      const aktif = isAktif(col.dayIndex);
                       const today = isToday(col.dayIndex);
+                      const siswaObj = petugasObj
+                        ? siswaMap.get(petugasObj.siswa_id) ||
+                          siswaList.find(
+                            (s) =>
+                              s.nama.trim().toLowerCase() ===
+                              petugasObj.nama.trim().toLowerCase()
+                          )
+                        : null;
+
                       return (
                         <td
-                          key={col.dayIndex}
+                          key={`td-${col.dayIndex}-${rowIndex}`}
                           className={`px-3 py-3 text-center transition-colors ${
-                            aktif ? "bg-yellow-50" : today ? "bg-yellow-50/60" : ""
+                            today ? "bg-yellow-50/60" : ""
                           }`}
                         >
                           {petugasObj ? (
-                            <span
-                              className={`inline-block whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold ${
-                                aktif
-                                  ? "bg-yellow-500 text-slate-900 shadow-sm"
-                                  : today
-                                  ? "bg-yellow-100 text-yellow-900 border border-yellow-300"
-                                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                              }`}
-                            >
-                              {petugasObj.nama}
-                            </span>
+                            <div className="inline-flex flex-col items-center gap-1">
+                              <span
+                                className={`inline-block whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs ${
+                                  today
+                                    ? "bg-yellow-100 text-yellow-900 border border-yellow-300 font-bold"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                              >
+                                {petugasObj.nama}
+                              </span>
+                              {selectedAngkatan === "Semua" && siswaObj?.angkatan && (
+                                <span className="text-[10px] font-medium text-slate-400">
+                                  {siswaObj.angkatan === "Kelas XII (PKL)"
+                                    ? "Kelas XII"
+                                    : siswaObj.angkatan}
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span className="text-gray-300 text-xs">—</span>
                           )}
@@ -323,3 +401,4 @@ export default function JadwalPiket() {
     </section>
   );
 }
+

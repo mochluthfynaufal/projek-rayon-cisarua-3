@@ -14,7 +14,8 @@ import {
   LogOut,
   MessageSquareWarning,
   KeyRound,
-  UserCircle2
+  UserCircle2,
+  Images,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import ModalUbahPassword from "@/app/components/ModalUbahPassword";
@@ -55,17 +56,17 @@ export default function Navbar() {
         borderColor: "border-yellow-100",
         gradientOverlay: "from-yellow-400 to-amber-500",
       };
-    } else if (pathname === "/komunitas") {
+    } else if (pathname === "/galeri" || pathname === "/komunitas") {
       return {
-        primary: "blue",
-        gradient: "from-blue-500 to-blue-600",
-        gradientHover: "from-blue-600 to-blue-700",
-        text: "from-blue-600 to-blue-600",
-        bg: "bg-blue-100",
-        bgHover: "hover:bg-blue-50/80",
-        textHover: "hover:text-blue-600",
-        borderColor: "border-blue-100",
-        gradientOverlay: "from-blue-400 to-blue-500",
+        primary: "amber",
+        gradient: "from-amber-500 via-yellow-500 to-emerald-600",
+        gradientHover: "from-amber-600 via-yellow-600 to-emerald-700",
+        text: "from-amber-600 to-yellow-600",
+        bg: "bg-yellow-100",
+        bgHover: "hover:bg-yellow-50/80",
+        textHover: "hover:text-yellow-600",
+        borderColor: "border-yellow-100",
+        gradientOverlay: "from-amber-400 to-yellow-500",
       };
     } else if (pathname === "/quiz") {
       return {
@@ -111,7 +112,7 @@ export default function Navbar() {
     },
     {
       icon: BookOpen,
-      label: "Rayon & Kelas",
+      label: "Rayon",
       href: "/belajar",
     },
     {
@@ -120,9 +121,9 @@ export default function Navbar() {
       href: "/contact",
     },
     {
-      icon: Users,
-      label: "Komunitas",
-      href: "/komunitas",
+      icon: Images,
+      label: "Galeri & Prestasi",
+      href: "/galeri",
     },
   ];
 
