@@ -95,9 +95,9 @@ const sejarahKelas: EventSejarah[] = [
 ]
 
 const statusStyle = {
-  lampau:    { dot: "bg-green-500",  ring: "ring-green-200",  label: "Selesai",     labelBg: "bg-green-100 text-green-700" },
-  berjalan:  { dot: "bg-yellow-500", ring: "ring-yellow-200", label: "Berlangsung", labelBg: "bg-yellow-100 text-yellow-700" },
-  mendatang: { dot: "bg-gray-400",   ring: "ring-gray-200",   label: "Mendatang",   labelBg: "bg-gray-100 text-gray-600" },
+  lampau: { dot: "bg-green-500", ring: "ring-green-200", label: "Selesai", labelBg: "bg-green-100 text-green-700" },
+  berjalan: { dot: "bg-yellow-500", ring: "ring-yellow-200", label: "Berlangsung", labelBg: "bg-yellow-100 text-yellow-700" },
+  mendatang: { dot: "bg-gray-400", ring: "ring-gray-200", label: "Mendatang", labelBg: "bg-gray-100 text-gray-600" },
 }
 
 export default function EcoTimeline() {
@@ -142,8 +142,8 @@ export default function EcoTimeline() {
                     {ev.status === "lampau"
                       ? <CheckCircle className="w-4 h-4 text-white" />
                       : ev.status === "berjalan"
-                      ? <CalendarDays className="w-4 h-4 text-white" />
-                      : <Flag className="w-4 h-4 text-white" />
+                        ? <CalendarDays className="w-4 h-4 text-white" />
+                        : <Flag className="w-4 h-4 text-white" />
                     }
                   </div>
 

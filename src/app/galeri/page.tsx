@@ -108,11 +108,10 @@ export default function GaleriPage() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div
             onClick={() => setActiveTab("kegiatan")}
-            className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${
-              activeTab === "kegiatan"
+            className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${activeTab === "kegiatan"
                 ? "bg-gradient-to-br from-blue-50 to-indigo-100/80 border-blue-300 ring-2 ring-blue-400"
                 : "bg-white/90 backdrop-blur-xl border-white hover:border-blue-200"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-12 h-12 rounded-2xl bg-blue-400/20 text-blue-700 flex items-center justify-center font-black">
@@ -132,11 +131,10 @@ export default function GaleriPage() {
 
           <div
             onClick={() => setActiveTab("prestasi")}
-            className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${
-              activeTab === "prestasi"
+            className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl ${activeTab === "prestasi"
                 ? "bg-gradient-to-br from-yellow-50 to-amber-100/80 border-yellow-300 ring-2 ring-yellow-400"
                 : "bg-white/90 backdrop-blur-xl border-white hover:border-yellow-200"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="w-12 h-12 rounded-2xl bg-yellow-400/20 text-yellow-700 flex items-center justify-center font-black">
@@ -180,11 +178,10 @@ export default function GaleriPage() {
           <div className="inline-flex p-1.5 bg-white/90 backdrop-blur-xl border border-gray-200 rounded-full shadow-lg">
             <button
               onClick={() => setActiveTab("kegiatan")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${
-                activeTab === "kegiatan"
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${activeTab === "kegiatan"
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md scale-102"
                   : "text-gray-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               <Camera className={`w-4 h-4 ${activeTab === "kegiatan" ? "text-white" : "text-blue-500"}`} />
               <span>Galeri Dokumentasi Rayon</span>
@@ -195,11 +192,10 @@ export default function GaleriPage() {
 
             <button
               onClick={() => setActiveTab("prestasi")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${
-                activeTab === "prestasi"
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${activeTab === "prestasi"
                   ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-900 shadow-md scale-102"
                   : "text-gray-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               <Trophy className={`w-4 h-4 ${activeTab === "prestasi" ? "text-slate-950" : "text-amber-500"}`} />
               <span>Library Prestasi Siswa</span>

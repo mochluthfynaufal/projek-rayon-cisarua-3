@@ -36,11 +36,11 @@ interface SiswaDB {
 }
 
 const roleConfig: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  admin:    { label: "Admin",            color: "text-red-700",    bg: "bg-red-100",    icon: Shield },
-  guru:     { label: "Guru / PS",        color: "text-purple-700", bg: "bg-purple-100", icon: GraduationCap },
-  pengurus: { label: "Pengurus Rayon",   color: "text-yellow-700", bg: "bg-yellow-100", icon: Star },
-  siswa:    { label: "Siswa",            color: "text-blue-700",   bg: "bg-blue-100",   icon: Users },
-  guest:    { label: "Tamu",             color: "text-gray-700",   bg: "bg-gray-100",   icon: User },
+  admin: { label: "Admin", color: "text-red-700", bg: "bg-red-100", icon: Shield },
+  guru: { label: "Guru / PS", color: "text-purple-700", bg: "bg-purple-100", icon: GraduationCap },
+  pengurus: { label: "Pengurus Rayon", color: "text-yellow-700", bg: "bg-yellow-100", icon: Star },
+  siswa: { label: "Siswa", color: "text-blue-700", bg: "bg-blue-100", icon: Users },
+  guest: { label: "Tamu", color: "text-gray-700", bg: "bg-gray-100", icon: User },
 };
 
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
@@ -298,7 +298,7 @@ export default function ProfilPage() {
                   <CreditCard className="w-4 h-4 text-yellow-500" />Identitas Akun
                 </h2>
                 {loadingData ? (
-                  <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-5 bg-gray-100 rounded-lg animate-pulse" />)}</div>
+                  <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-5 bg-gray-100 rounded-lg animate-pulse" />)}</div>
                 ) : (
                   <dl className="space-y-3">
                     <InfoRow icon={<User className="w-3.5 h-3.5 text-gray-400" />} label="Nama Lengkap" value={displayName} />
@@ -572,11 +572,10 @@ export default function ProfilPage() {
 
                   {prestasiMsg && (
                     <div
-                      className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                        prestasiMsg.type === "ok"
+                      className={`p-3 rounded-xl text-xs flex items-center gap-2 ${prestasiMsg.type === "ok"
                           ? "bg-green-50 text-green-700 border border-green-200"
                           : "bg-red-50 text-red-700 border border-red-200"
-                      }`}
+                        }`}
                     >
                       {prestasiMsg.type === "ok" ? (
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" />

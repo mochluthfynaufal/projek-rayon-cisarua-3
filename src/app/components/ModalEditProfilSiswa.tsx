@@ -33,6 +33,13 @@ export default function ModalEditProfilSiswa({
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   // Form input prestasi baru
   const [namaPrestasi, setNamaPrestasi] = useState("");
   const [juara, setJuara] = useState("Juara 1");
@@ -103,11 +110,16 @@ export default function ModalEditProfilSiswa({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto overscroll-contain"
+      data-lenis-prevent="true"
+      onClick={onClose}
+    >
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col z-10"
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto flex flex-col z-10 overscroll-contain my-auto"
+        data-lenis-prevent="true"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

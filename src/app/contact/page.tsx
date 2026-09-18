@@ -240,17 +240,17 @@ export default function ContactPage() {
     primaryColor: "text-yellow-500",
     ctaPrimary: isViewOnly
       ? {
-          text: "Lihat Rekap Keluhan",
-          action: () => {
-            document.getElementById("output-keluhan")?.scrollIntoView({ behavior: "smooth" });
-          },
-        }
-      : {
-          text: "Tulis Keluhan",
-          action: () => {
-            document.getElementById("form-keluhan")?.scrollIntoView({ behavior: "smooth" });
-          },
+        text: "Lihat Rekap Keluhan",
+        action: () => {
+          document.getElementById("output-keluhan")?.scrollIntoView({ behavior: "smooth" });
         },
+      }
+      : {
+        text: "Tulis Keluhan",
+        action: () => {
+          document.getElementById("form-keluhan")?.scrollIntoView({ behavior: "smooth" });
+        },
+      },
     ctaSecondary: {
       text: "Lihat Rekap Status",
       action: () => {
@@ -274,7 +274,7 @@ export default function ContactPage() {
       {/* Main Content Section */}
       <section className="w-full py-16 px-4 bg-gray-50/80">
         <div className="max-w-6xl mx-auto">
-          
+
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
             <div className="flex items-center gap-3">
@@ -397,8 +397,8 @@ export default function ContactPage() {
                       item.status === "Selesai"
                         ? "bg-emerald-100 text-emerald-800 border-emerald-200"
                         : item.status === "Diproses"
-                        ? "bg-blue-100 text-blue-800 border-blue-200"
-                        : "bg-amber-100 text-amber-800 border-amber-200";
+                          ? "bg-blue-100 text-blue-800 border-blue-200"
+                          : "bg-amber-100 text-amber-800 border-amber-200";
 
                     return (
                       <div
@@ -496,11 +496,10 @@ export default function ContactPage() {
 
                   {submitMsg && (
                     <div
-                      className={`p-4 rounded-2xl mb-6 text-xs flex items-start gap-2.5 ${
-                        submitMsg.type === "success"
+                      className={`p-4 rounded-2xl mb-6 text-xs flex items-start gap-2.5 ${submitMsg.type === "success"
                           ? "bg-green-50 text-green-800 border border-green-200"
                           : "bg-red-50 text-red-800 border border-red-200"
-                      }`}
+                        }`}
                     >
                       {submitMsg.type === "success" ? (
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5 text-green-600" />
@@ -652,8 +651,8 @@ export default function ContactPage() {
                         item.status === "Selesai"
                           ? "bg-emerald-100 text-emerald-800 border-emerald-200"
                           : item.status === "Diproses"
-                          ? "bg-blue-100 text-blue-800 border-blue-200"
-                          : "bg-amber-100 text-amber-800 border-amber-200";
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : "bg-amber-100 text-amber-800 border-amber-200";
 
                       return (
                         <div

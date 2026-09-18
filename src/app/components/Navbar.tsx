@@ -149,14 +149,12 @@ export default function Navbar() {
     <>
       {/* Desktop Navbar - Capsule Shape */}
       <nav
-        className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-[90] transition-all duration-500 ease-in-out ${
-          scrolled ? "scale-95 top-4" : "scale-100"
-        }`}
+        className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-[90] transition-all duration-500 ease-in-out ${scrolled ? "scale-95 top-4" : "scale-100"
+          }`}
       >
         <div
-          className={`backdrop-blur-md rounded-full px-6 py-2.5 bg-white/90 hover:bg-white/98 border border-white/80 hover:border-gray-300/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 ${
-            scrolled ? "py-2 bg-white/95 backdrop-blur-lg shadow-md" : ""
-          }`}
+          className={`backdrop-blur-md rounded-full px-6 py-2.5 bg-white/90 hover:bg-white/98 border border-white/80 hover:border-gray-300/80 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 ${scrolled ? "py-2 bg-white/95 backdrop-blur-lg shadow-md" : ""
+            }`}
         >
           <div className="flex items-center justify-center">
             {/* Desktop Menu */}
@@ -195,11 +193,10 @@ export default function Navbar() {
                       key={item.label}
                       href={item.href}
                       onMouseEnter={() => setHoveredHref(item.href)}
-                      className={`relative flex items-center space-x-1.5 px-3.5 py-2 rounded-full transition-colors duration-200 select-none z-10 ${
-                        isSelected
+                      className={`relative flex items-center space-x-1.5 px-3.5 py-2 rounded-full transition-colors duration-200 select-none z-10 ${isSelected
                           ? `${theme.textHover.replace("hover:", "")} font-semibold`
                           : "text-gray-600 hover:text-gray-900 font-medium"
-                      }`}
+                        }`}
                     >
                       {isSelected && (
                         <motion.div
@@ -213,9 +210,8 @@ export default function Navbar() {
                         />
                       )}
                       <IconComponent
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          isSelected ? "scale-110 -rotate-3" : ""
-                        }`}
+                        className={`w-4 h-4 transition-transform duration-200 ${isSelected ? "scale-110 -rotate-3" : ""
+                          }`}
                       />
                       <span className="text-sm whitespace-nowrap">
                         {item.label}
@@ -291,9 +287,8 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div
           className="absolute inset-0 bg-black/20 backdrop-blur-sm"
@@ -301,11 +296,9 @@ export default function Navbar() {
         ></div>
 
         <div
-          className={`absolute top-24 left-4 right-4 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border ${
-            theme.borderColor
-          } p-6 transform transition-all duration-300 max-h-[80vh] overflow-y-auto ${
-            isOpen ? "translate-y-0 scale-100" : "-translate-y-4 scale-95"
-          }`}
+          className={`absolute top-24 left-4 right-4 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border ${theme.borderColor
+            } p-6 transform transition-all duration-300 max-h-[80vh] overflow-y-auto ${isOpen ? "translate-y-0 scale-100" : "-translate-y-4 scale-95"
+            }`}
         >
           <div className="space-y-2">
             {navItems.map((item, index) => {
@@ -316,11 +309,10 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`group flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
-                    isActive
+                  className={`group flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 ${isActive
                       ? `${theme.bg} ${theme.textHover.replace("hover:", "")} shadow-sm font-bold`
                       : `text-gray-700 ${theme.textHover} ${theme.bgHover}`
-                  }`}
+                    }`}
                 >
                   <div className={`${isActive ? theme.bg : theme.bg} p-2 rounded-full transition-colors duration-200`}>
                     <IconComponent className={`w-5 h-5 ${isActive ? theme.textHover.replace("hover:", "") : `text-${theme.primary}-600`}`} />

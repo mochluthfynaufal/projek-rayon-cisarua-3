@@ -2,7 +2,7 @@
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LatarBelakang from "./components/LatarBelakang";
-import Support from "./components/SupportBy";
+import InformasiRayon from "./components/InformasiRayon";
 import EnhancedStats from "./components/EnhancedStats";
 
 
@@ -44,7 +44,7 @@ export default function Home() {
       <Navbar />
       <Hero {...homeHeroProps} />
       <LatarBelakang />
-      <Support />
+      <InformasiRayon />
 
       <EnhancedStats />
 

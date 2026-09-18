@@ -17,7 +17,7 @@ const initialDefaultJadwal: PiketDayData[] = [
       { siswa_id: 28, nama: "M Zafa Zulprana" },
       { siswa_id: 29, nama: "Muhammad Asrul Gunawan" },
       { siswa_id: 12, nama: "Nadira Dewanti Putri" },
-      { siswa_id: 6,  nama: "Moch Luthfy Naufal" },
+      { siswa_id: 6, nama: "Moch Luthfy Naufal" },
       { siswa_id: 17, nama: "Syifa Dwi Anggraini" },
       { siswa_id: 18, nama: "Zaghita Rahmah Firdaus" },
     ],
@@ -26,11 +26,11 @@ const initialDefaultJadwal: PiketDayData[] = [
     hari: "Selasa",
     dayIndex: 2,
     petugas: [
-      { siswa_id: 1,  nama: "Al'Fika Dwi Cahyani" },
-      { siswa_id: 3,  nama: "Fadlan Ahmad Jamil Al Ayubi" },
-      { siswa_id: 5,  nama: "Haphinatul Shafira" },
-      { siswa_id: 7,  nama: "Muhamad Aditya Abdilah" },
-      { siswa_id: 8,  nama: "Muhamad Azwan Muzaki" },
+      { siswa_id: 1, nama: "Al'Fika Dwi Cahyani" },
+      { siswa_id: 3, nama: "Fadlan Ahmad Jamil Al Ayubi" },
+      { siswa_id: 5, nama: "Haphinatul Shafira" },
+      { siswa_id: 7, nama: "Muhamad Aditya Abdilah" },
+      { siswa_id: 8, nama: "Muhamad Azwan Muzaki" },
       { siswa_id: 10, nama: "Muhamad Fedliansyah Ilham" },
       { siswa_id: 14, nama: "Salsabila Destiana Putri" },
     ],
@@ -42,8 +42,8 @@ const initialDefaultJadwal: PiketDayData[] = [
       { siswa_id: 25, nama: "Dervy Alita Wijaya" },
       { siswa_id: 31, nama: "Muhammad Naufal Alkahfi" },
       { siswa_id: 34, nama: "Sifa Aulia" },
-      { siswa_id: 4,  nama: "Fadliansyah Venanda" },
-      { siswa_id: 9,  nama: "Muhamad Fadilah" },
+      { siswa_id: 4, nama: "Fadliansyah Venanda" },
+      { siswa_id: 9, nama: "Muhamad Fadilah" },
       { siswa_id: 13, nama: "Ridwan Faiz Rojabi" },
       { siswa_id: 16, nama: "Siti Aliya Zhafirah" },
     ],
@@ -68,7 +68,7 @@ const initialDefaultJadwal: PiketDayData[] = [
       { siswa_id: 21, nama: "Alisya Zahwa Nurlatifah" },
       { siswa_id: 26, nama: "Dinda Aqila Nurfadilah" },
       { siswa_id: 35, nama: "Siti Erfina Nurmawati" },
-      { siswa_id: 2,  nama: "Bagas Dizwar Asfas" },
+      { siswa_id: 2, nama: "Bagas Dizwar Asfas" },
       { siswa_id: 11, nama: "Muhammad Rafliansyah Putra" },
       { siswa_id: 15, nama: "Sandy Prayogo" },
       { siswa_id: 19, nama: "Zyad Abdillah" },
@@ -201,13 +201,13 @@ export default function JadwalPiket() {
         selectedAngkatan === "Semua"
           ? cleanPetugas
           : cleanPetugas.filter((p) => {
-              const siswa =
-                siswaMap.get(p.siswa_id) ||
-                siswaList.find(
-                  (s) => s.nama.trim().toLowerCase() === p.nama.trim().toLowerCase()
-                );
-              return siswa?.angkatan === selectedAngkatan;
-            });
+            const siswa =
+              siswaMap.get(p.siswa_id) ||
+              siswaList.find(
+                (s) => s.nama.trim().toLowerCase() === p.nama.trim().toLowerCase()
+              );
+            return siswa?.angkatan === selectedAngkatan;
+          });
       return {
         ...day,
         petugas: filtered,
@@ -267,11 +267,10 @@ export default function JadwalPiket() {
                     key={ang.key}
                     type="button"
                     onClick={() => setSelectedAngkatan(ang.key)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                      isActive
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${isActive
                         ? "bg-yellow-500 text-slate-900 shadow-sm"
                         : "text-slate-600 hover:text-slate-900 hover:bg-gray-200/60"
-                    }`}
+                      }`}
                   >
                     {ang.label}
                   </button>
@@ -287,26 +286,21 @@ export default function JadwalPiket() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr>
-                  <th className="bg-slate-900 text-slate-400 text-xs font-bold uppercase tracking-wider px-5 py-4 text-left w-36 sticky left-0 z-10 border-b border-slate-800">
-                    Petugas
-                  </th>
                   {filteredJadwal.map((col) => {
                     const today = isToday(col.dayIndex);
                     return (
                       <th
                         key={`th-${col.dayIndex}`}
-                        className={`text-center px-4 py-4 font-bold text-sm transition-colors border-b border-slate-800 ${
-                          today ? "bg-yellow-500 text-slate-900" : "bg-slate-900 text-white"
-                        }`}
+                        className={`text-center px-4 py-4 font-bold text-sm transition-colors border-b border-slate-800 ${today ? "bg-yellow-500 text-slate-900" : "bg-slate-900 text-white"
+                          }`}
                       >
                         <div className="flex flex-col items-center gap-1">
                           <span>{col.hari}</span>
                           <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              today
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${today
                                 ? "bg-slate-900 text-yellow-400"
                                 : "bg-white/10 text-gray-300"
-                            }`}
+                              }`}
                           >
                             {today ? "Hari Ini" : `${col.petugas.length} Siswa`}
                           </span>
@@ -323,44 +317,31 @@ export default function JadwalPiket() {
                     key={`tr-${rowIndex}`}
                     className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50/50"}
                   >
-                    <td className="px-5 py-3.5 sticky left-0 bg-inherit border-r border-gray-100">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-slate-800 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
-                          {rowIndex + 1}
-                        </div>
-                        <span className="text-xs text-gray-400 font-medium">
-                          Petugas {rowIndex + 1}
-                        </span>
-                      </div>
-                    </td>
-
                     {filteredJadwal.map((col) => {
                       const petugasObj = col.petugas[rowIndex] ?? null;
                       const today = isToday(col.dayIndex);
                       const siswaObj = petugasObj
                         ? siswaMap.get(petugasObj.siswa_id) ||
-                          siswaList.find(
-                            (s) =>
-                              s.nama.trim().toLowerCase() ===
-                              petugasObj.nama.trim().toLowerCase()
-                          )
+                        siswaList.find(
+                          (s) =>
+                            s.nama.trim().toLowerCase() ===
+                            petugasObj.nama.trim().toLowerCase()
+                        )
                         : null;
 
                       return (
                         <td
                           key={`td-${col.dayIndex}-${rowIndex}`}
-                          className={`px-3 py-3 text-center transition-colors ${
-                            today ? "bg-yellow-50/60" : ""
-                          }`}
+                          className={`px-3 py-3 text-center transition-colors ${today ? "bg-yellow-50/60" : ""
+                            }`}
                         >
                           {petugasObj ? (
                             <div className="inline-flex flex-col items-center gap-1">
                               <span
-                                className={`inline-block whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs ${
-                                  today
+                                className={`inline-block whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs ${today
                                     ? "bg-yellow-100 text-yellow-900 border border-yellow-300 font-bold"
                                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
+                                  }`}
                               >
                                 {petugasObj.nama}
                               </span>

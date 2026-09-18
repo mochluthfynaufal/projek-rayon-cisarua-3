@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
 import { daftarSiswa, adminNisList } from "@/lib/siswaData";
+import { verifyUserPassword } from "@/lib/authPasswordService";
 import {
   Lock,
   Mail,
@@ -128,11 +129,13 @@ export default function LoginPage() {
 
       // Percobaan 2: Jika GoTrue Auth error (seperti 500 schema error), lakukan verifikasi data siswa/guru
       if (!loginSuccess) {
-        // Cek kecocokan password dengan NIS siswa atau password khusus guru
-        const isPasswordValid =
-          (expectedPassword && trimmedPass === expectedPassword) ||
-          (targetNis && trimmedPass === targetNis) ||
-          (targetRole === "guru" && trimmedPass === "psrayoncisarua");
+        // Cek kecocokan password dengan password kustom (jika sudah diubah) atau NIS/password guru
+        const defaultPassword = targetRole === "guru" ? "psrayoncisarua" : (expectedPassword || targetNis || "");
+        const isPasswordValid = verifyUserPassword(trimmedPass, {
+          email: targetEmail,
+          nis: targetNis,
+          defaultPassword,
+        });
 
         if (isPasswordValid) {
           // Cari record profile di database Supabase jika ada
@@ -150,6 +153,42 @@ export default function LoginPage() {
               targetNama = dbProf.nama || targetNama;
               targetRole = dbProf.role || targetRole;
               targetSiswaId = dbProf.siswa_id || targetSiswaId;
+            }
+
+            // ✅ Daftarkan akun ke Supabase Auth agar fitur ganti password bisa bekerja
+            // Gunakan NIS (atau password guru) sebagai password awal di Supabase Auth
+            try {
+              const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email: targetEmail,
+                password: trimmedPass, // NIS / password guru
+                options: { emailRedirectTo: undefined },
+              });
+
+              if (signUpData?.user && !signUpError) {
+                // Akun baru berhasil dibuat, sinkronkan profile
+                customUserId = signUpData.user.id;
+                await supabase.from("profiles").upsert({
+                  id: signUpData.user.id,
+                  email: targetEmail,
+                  nama: targetNama,
+                  nis: targetNis || null,
+                  role: targetRole,
+                  siswa_id: targetSiswaId,
+                });
+              } else if (signUpError?.message?.toLowerCase().includes("already registered") ||
+                         signUpError?.message?.toLowerCase().includes("already exists")) {
+                // Akun sudah ada di Supabase Auth, coba signIn untuk dapat sesi aktif
+                const { data: reSignIn } = await supabase.auth.signInWithPassword({
+                  email: targetEmail,
+                  password: trimmedPass,
+                });
+                if (reSignIn?.user) {
+                  customUserId = reSignIn.user.id;
+                }
+              }
+            } catch (authRegisterErr) {
+              // Gagal daftarkan ke Auth — tidak apa-apa, login lokal tetap jalan
+              console.warn("Auto auth register failed (non-critical):", authRegisterErr);
             }
           }
 
@@ -173,7 +212,8 @@ export default function LoginPage() {
           await refreshProfile();
           loginSuccess = true;
         } else {
-          throw new Error("Kata sandi salah. Masukkan NIS yang sesuai dengan akun Anda.");
+          const hint = targetNis ? ` (NIS: ${targetNis})` : "";
+          throw new Error(`Kata sandi salah. Masukkan kata sandi yang telah Anda ubah atau gunakan NIS Anda${hint} jika belum diubah.`);
         }
       }
 
@@ -185,7 +225,7 @@ export default function LoginPage() {
       console.error("Login error:", err);
       setErrorMessage(
         err.message?.includes("Invalid login credentials")
-          ? "Kata sandi salah. Masukkan NIS yang sesuai dengan akun Anda."
+          ? "Kata sandi salah. Masukkan kata sandi yang sesuai atau gunakan NIS Anda."
           : err.message || "Gagal masuk. Periksa kembali email/NIS dan kata sandi."
       );
     } finally {
@@ -200,7 +240,7 @@ export default function LoginPage() {
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-2xl shadow-yellow-500/10 text-slate-800 relative z-10">
-        
+
         {/* Back Link */}
         <Link
           href="/"

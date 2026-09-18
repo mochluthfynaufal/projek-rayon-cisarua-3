@@ -9,8 +9,8 @@ import { daftarSiswa, type Siswa } from "@/lib/siswaData";
 // ── Inner component yang pakai useSearchParams ────────────────────────────────
 function LoginPageInner() {
   const [loggedIn, setLoggedIn] = useState<Siswa | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const router       = useRouter();
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function LoginPageInner() {
       // Session aktif → tampilkan profil
       try {
         const parsed = JSON.parse(session) as { id: number };
-        const found  = daftarSiswa.find((s) => s.id === parsed.id);
+        const found = daftarSiswa.find((s) => s.id === parsed.id);
         if (found) {
           setLoggedIn(found);
           setLoading(false);

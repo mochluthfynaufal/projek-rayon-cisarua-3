@@ -156,9 +156,8 @@ export default function EnhancedStats() {
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                  isVisible ? "bg-emerald-500" : "bg-gray-300"
-                }`}
+                className={`w-2 h-2 rounded-full transition-all duration-500 ${isVisible ? "bg-emerald-500" : "bg-gray-300"
+                  }`}
                 style={{ animationDelay: `${i * 200}ms` }}
               />
             ))}
@@ -174,9 +173,8 @@ export default function EnhancedStats() {
             return (
               <div
                 key={index}
-                className={`group relative cursor-pointer transform transition-all duration-700 ${
-                  isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-                }`}
+                className={`group relative cursor-pointer transform transition-all duration-700 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                  }`}
                 style={{
                   animation: isVisible ? `float 6s ease-in-out infinite ${floatDelay}` : "none",
                   transitionDelay: `${index * 150}ms`,
@@ -209,12 +207,11 @@ export default function EnhancedStats() {
                       </div>
 
                       {/* Badge */}
-                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm ${
-                        stat.color === 'emerald' ? 'bg-green-100 text-green-700' :
-                        stat.color === 'blue' ? 'bg-blue-100 text-blue-700' :
-                        stat.color === 'green' ? 'bg-lime-100 text-lime-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm ${stat.color === 'emerald' ? 'bg-green-100 text-green-700' :
+                          stat.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                            stat.color === 'green' ? 'bg-lime-100 text-lime-700' :
+                              'bg-yellow-100 text-yellow-700'
+                        }`}>
                         {stat.growth}
                       </div>
                     </div>

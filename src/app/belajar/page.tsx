@@ -3,11 +3,11 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 
-import ProfilWaliKelas   from "./components/ProfilWaliKelas";
-import StrukturKelas     from "./components/StrukturKelas";
-import DaftarSiswa       from "./components/DaftarSiswa";
-import JadwalPiket       from "./components/JadwalPiket";
-import GamePiket         from "./components/GamePiket";
+import ProfilWaliKelas from "./components/ProfilWaliKelas";
+import StrukturKelas from "./components/StrukturKelas";
+import DaftarSiswa from "./components/DaftarSiswa";
+import JadwalPiket from "./components/JadwalPiket";
+import GamePiket from "./components/GamePiket";
 
 export default function BelajarPage() {
   // ================================================================

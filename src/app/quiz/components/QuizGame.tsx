@@ -350,9 +350,8 @@ export default function QuizGame() {
             <div className="flex items-center gap-2 md:gap-3">
               <Clock className="w-4 h-4 md:w-5 md:h-5" />
               <span
-                className={`text-sm md:text-base font-bold ${
-                  timeLeft <= 10 ? "text-red-200" : ""
-                }`}
+                className={`text-sm md:text-base font-bold ${timeLeft <= 10 ? "text-red-200" : ""
+                  }`}
               >
                 {timeLeft}s
               </span>
@@ -373,19 +372,18 @@ export default function QuizGame() {
               {currentQ.category}
             </span>
             <span
-              className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${
-                currentQ.difficulty === "easy"
+              className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${currentQ.difficulty === "easy"
                   ? "bg-green-500/80"
                   : currentQ.difficulty === "medium"
-                  ? "bg-yellow-500/80"
-                  : "bg-red-500/80"
-              }`}
+                    ? "bg-yellow-500/80"
+                    : "bg-red-500/80"
+                }`}
             >
               {currentQ.difficulty === "easy"
                 ? "Mudah"
                 : currentQ.difficulty === "medium"
-                ? "Sedang"
-                : "Sulit"}{" "}
+                  ? "Sedang"
+                  : "Sulit"}{" "}
               • {currentQ.points} poin
             </span>
           </div>
@@ -404,33 +402,31 @@ export default function QuizGame() {
                 key={index}
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showResult}
-                className={`w-full p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 ${
-                  showResult
+                className={`w-full p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 ${showResult
                     ? index === currentQ.correctAnswer
                       ? "bg-green-100 border-green-300 text-green-800"
                       : index === selectedAnswer &&
                         index !== currentQ.correctAnswer
-                      ? "bg-red-100 border-red-300 text-red-800"
-                      : "bg-gray-50 border-gray-200 text-gray-600"
+                        ? "bg-red-100 border-red-300 text-red-800"
+                        : "bg-gray-50 border-gray-200 text-gray-600"
                     : selectedAnswer === index
-                    ? "bg-blue-100 border-blue-300 text-blue-800 scale-102"
-                    : "bg-gray-50 border-gray-200 text-gray-800 hover:bg-blue-50 hover:border-blue-200 hover:scale-102"
-                }`}
+                      ? "bg-blue-100 border-blue-300 text-blue-800 scale-102"
+                      : "bg-gray-50 border-gray-200 text-gray-800 hover:bg-blue-50 hover:border-blue-200 hover:scale-102"
+                  }`}
               >
                 <div className="flex items-center gap-3 md:gap-4">
                   <div
-                    className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center font-bold text-sm md:text-base ${
-                      showResult
+                    className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center font-bold text-sm md:text-base ${showResult
                         ? index === currentQ.correctAnswer
                           ? "bg-green-500 border-green-500 text-white"
                           : index === selectedAnswer &&
                             index !== currentQ.correctAnswer
-                          ? "bg-red-500 border-red-500 text-white"
-                          : "border-gray-300 text-gray-500"
+                            ? "bg-red-500 border-red-500 text-white"
+                            : "border-gray-300 text-gray-500"
                         : selectedAnswer === index
-                        ? "bg-blue-500 border-blue-500 text-white"
-                        : "border-gray-300 text-gray-500"
-                    }`}
+                          ? "bg-blue-500 border-blue-500 text-white"
+                          : "border-gray-300 text-gray-500"
+                      }`}
                   >
                     {String.fromCharCode(65 + index)}
                   </div>

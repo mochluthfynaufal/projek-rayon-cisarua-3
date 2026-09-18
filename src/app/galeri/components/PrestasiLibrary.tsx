@@ -42,6 +42,17 @@ export default function PrestasiLibrary({ prestasiList, isLoading }: PrestasiLib
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<PrestasiData | null>(null);
 
+  React.useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
+
   // Filter Prestasi
   const filteredList = prestasiList.filter((item) => {
     const matchesTingkat =
@@ -162,11 +173,10 @@ export default function PrestasiLibrary({ prestasiList, isLoading }: PrestasiLib
               <button
                 key={tingkat}
                 onClick={() => setSelectedTingkat(tingkat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                  isSelected
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${isSelected
                     ? "bg-slate-900 text-white shadow-md shadow-slate-900/10 scale-105"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 {tingkat}
               </button>
@@ -332,14 +342,16 @@ export default function PrestasiLibrary({ prestasiList, isLoading }: PrestasiLib
       <AnimatePresence>
         {selectedImage && (
           <div
-            className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto overscroll-contain"
+            data-lenis-prevent="true"
             onClick={() => setSelectedImage(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
+              className="bg-white rounded-3xl max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col overscroll-contain my-auto"
+              data-lenis-prevent="true"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

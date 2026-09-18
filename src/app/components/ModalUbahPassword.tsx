@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X, Lock, KeyRound, CheckCircle2, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { saveCustomPassword, verifyUserPassword } from "@/lib/authPasswordService";
 
 interface ModalUbahPasswordProps {
   isOpen: boolean;
@@ -10,12 +11,34 @@ interface ModalUbahPasswordProps {
 }
 
 export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPasswordProps) {
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -24,46 +47,113 @@ export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPassword
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (newPassword.length < 6) {
+    const trimmedCurrent = currentPassword.trim();
+    const trimmedNew = newPassword.trim();
+    const trimmedConfirm = confirmPassword.trim();
+
+    if (!trimmedCurrent) {
+      setErrorMsg("Masukkan kata sandi saat ini terlebih dahulu.");
+      return;
+    }
+
+    if (trimmedNew.length < 6) {
       setErrorMsg("Kata sandi baru minimal harus 6 karakter.");
       return;
     }
 
-    if (newPassword !== confirmPassword) {
+    if (trimmedNew !== trimmedConfirm) {
       setErrorMsg("Konfirmasi kata sandi tidak cocok. Mohon periksa kembali.");
+      return;
+    }
+
+    if (trimmedCurrent === trimmedNew) {
+      setErrorMsg("Kata sandi baru tidak boleh sama dengan kata sandi saat ini.");
       return;
     }
 
     setLoading(true);
     try {
-      if (isSupabaseConfigured) {
-        const { error } = await supabase.auth.updateUser({
-          password: newPassword,
-        });
+      // 1. Ambil email & NIS dari sesi aktif atau localStorage
+      let userEmail: string | undefined;
+      let userNis: string | undefined;
+      let userRole: string | undefined;
+      let userNama: string | undefined;
 
-        if (error) throw error;
+      try {
+        const saved = localStorage.getItem("rayon_cisarua_3_user_session");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          userEmail = parsed?.email;
+          userNis = parsed?.nis;
+          userRole = parsed?.role;
+          userNama = parsed?.nama;
+        }
+      } catch (_) {}
+
+      if (!userEmail) {
+        if (isSupabaseConfigured) {
+          const { data: sessionData } = await supabase.auth.getSession();
+          userEmail = sessionData?.session?.user?.email;
+        }
       }
 
-      setSuccessMsg("Kata sandi Anda berhasil diperbarui! Gunakan kata sandi baru untuk login berikutnya.");
+      if (!userEmail && !userNis) {
+        throw new Error("Tidak dapat menemukan data akun. Silakan logout lalu login kembali.");
+      }
+
+      // 2. Verifikasi kata sandi saat ini
+      const defaultPassword = userRole === "guru" ? "psrayoncisarua" : userNis || "";
+      const isCurrentValid = verifyUserPassword(trimmedCurrent, {
+        email: userEmail,
+        nis: userNis,
+        defaultPassword,
+      });
+
+      if (!isCurrentValid) {
+        const hint = userNis ? ` Password awal adalah NIS: ${userNis}.` : "";
+        throw new Error(`Kata sandi saat ini salah.${hint} Masukkan kata sandi yang benar.`);
+      }
+
+      // 3. Simpan kata sandi baru ke persistent storage
+      saveCustomPassword(userEmail, userNis, trimmedNew, userNama);
+
+      // 4. Sinkronkan ke Supabase Auth jika ada sesi aktif
+      if (isSupabaseConfigured) {
+        try {
+          await supabase.auth.updateUser({
+            password: trimmedNew,
+          });
+        } catch (authSyncErr) {
+          console.log("[ModalUbahPassword] Supabase auth update notice (offline/fallback mode active):", authSyncErr);
+        }
+      }
+
+      setSuccessMsg("Kata sandi berhasil diperbarui! Gunakan kata sandi baru ini untuk login berikutnya.");
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+
       setTimeout(() => {
-        onClose();
-        setSuccessMsg(null);
+        handleClose();
       }, 2000);
     } catch (err: any) {
-      setErrorMsg(err.message || "Gagal mengubah kata sandi.");
+      setErrorMsg(err.message || "Gagal mengubah kata sandi. Coba beberapa saat lagi.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto overscroll-contain"
+      data-lenis-prevent="true"
+      onClick={handleClose}
+    >
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 z-10 overflow-hidden"
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 z-10 overflow-y-auto overscroll-contain my-auto max-h-[90vh]"
+        data-lenis-prevent="true"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -78,7 +168,7 @@ export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPassword
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors"
           >
             <X className="w-4 h-4" />
@@ -102,12 +192,39 @@ export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPassword
 
         {/* Form */}
         <form onSubmit={handleUpdatePassword} className="space-y-4">
+          {/* Kata sandi saat ini */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi Saat Ini</label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type={showCurrent ? "text" : "password"}
+                required
+                placeholder="Masukkan kata sandi saat ini"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-dashed border-gray-200 pt-1" />
+
+          {/* Kata sandi baru */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi Baru</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
-                type={showPassword ? "text" : "password"}
+                type={showNew ? "text" : "password"}
                 required
                 placeholder="Minimal 6 karakter"
                 value={newPassword}
@@ -116,20 +233,21 @@ export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPassword
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowNew(!showNew)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
+          {/* Konfirmasi kata sandi baru */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">Konfirmasi Kata Sandi Baru</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
-                type={showPassword ? "text" : "password"}
+                type={showNew ? "text" : "password"}
                 required
                 placeholder="Ulangi kata sandi baru"
                 value={confirmPassword}
@@ -142,7 +260,7 @@ export default function ModalUbahPassword({ isOpen, onClose }: ModalUbahPassword
           <div className="pt-2 flex items-center justify-end gap-2.5">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={loading}
               className="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
             >

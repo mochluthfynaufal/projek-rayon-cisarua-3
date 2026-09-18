@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Save, Calendar, Plus, Trash2, Loader2, Users } from "lucide-react";
 import { Siswa } from "@/lib/siswaData";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
@@ -60,6 +60,13 @@ export default function ModalEditPiket({
   const [selectedSiswaId, setSelectedSiswaId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const activeDay = jadwal.find((j) => j.dayIndex === activeDayIndex) || jadwal[0];
 
@@ -157,11 +164,16 @@ export default function ModalEditPiket({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto overscroll-contain"
+      data-lenis-prevent="true"
+      onClick={onClose}
+    >
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col z-10"
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto flex flex-col z-10 overscroll-contain my-auto"
+        data-lenis-prevent="true"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -201,11 +213,10 @@ export default function ModalEditPiket({
                   setActiveDayIndex(day.dayIndex);
                   setErrorMsg(null);
                 }}
-                className={`flex-1 min-w-[70px] py-2 text-xs font-bold rounded-xl transition-all ${
-                  activeDayIndex === day.dayIndex
+                className={`flex-1 min-w-[70px] py-2 text-xs font-bold rounded-xl transition-all ${activeDayIndex === day.dayIndex
                     ? "bg-yellow-500 text-slate-900 shadow-sm"
                     : "text-gray-600 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 {day.hari} ({day.petugas.length})
               </button>

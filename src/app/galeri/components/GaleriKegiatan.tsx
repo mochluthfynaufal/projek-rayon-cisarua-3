@@ -60,6 +60,17 @@ export default function GaleriKegiatan({
   // Hak akses: hanya admin, guru, dan pengurus
   const canAddGaleri = ["admin", "guru", "pengurus"].includes(role);
 
+  React.useEffect(() => {
+    if (showAddModal || selectedItem) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showAddModal, selectedItem]);
+
   const filteredList = galeriList.filter((item) => {
     if (selectedKategori === "Semua Kategori") return true;
     return item.kategori === selectedKategori;
@@ -174,11 +185,10 @@ export default function GaleriKegiatan({
               <button
                 key={kat}
                 onClick={() => setSelectedKategori(kat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                  isSelected
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${isSelected
                     ? "bg-slate-900 text-white shadow-md shadow-slate-900/10 scale-105"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 {kat}
               </button>
@@ -296,14 +306,16 @@ export default function GaleriKegiatan({
       <AnimatePresence>
         {selectedItem && (
           <div
-            className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto overscroll-contain"
+            data-lenis-prevent="true"
             onClick={() => setSelectedItem(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
+              className="bg-white rounded-3xl max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col overscroll-contain my-auto"
+              data-lenis-prevent="true"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
@@ -358,14 +370,16 @@ export default function GaleriKegiatan({
       <AnimatePresence>
         {showAddModal && canAddGaleri && (
           <div
-            className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain"
+            data-lenis-prevent="true"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto overscroll-contain my-auto"
+              data-lenis-prevent="true"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -385,11 +399,10 @@ export default function GaleriKegiatan({
 
               {formMsg && (
                 <div
-                  className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                    formMsg.type === "ok"
+                  className={`p-3 rounded-xl text-xs flex items-center gap-2 ${formMsg.type === "ok"
                       ? "bg-green-50 text-green-700 border border-green-200"
                       : "bg-red-50 text-red-700 border border-red-200"
-                  }`}
+                    }`}
                 >
                   {formMsg.type === "ok" ? (
                     <CheckCircle2 className="w-4 h-4 flex-shrink-0" />

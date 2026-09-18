@@ -7,6 +7,7 @@ const supabaseUrl =
 
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   "sb_publishable_GRH-c2AK610_t1DvfzOMxQ_25Etlgvl";
 
 export const isSupabaseConfigured = Boolean(

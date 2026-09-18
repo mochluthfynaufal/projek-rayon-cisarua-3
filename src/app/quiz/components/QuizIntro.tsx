@@ -136,11 +136,10 @@ export default function QuizIntro({ onStartQuiz }: QuizIntroProps) {
                   <button
                     key={difficulty.id}
                     onClick={() => setSelectedDifficulty(difficulty.id as any)}
-                    className={`text-left p-6 rounded-2xl border-2 transition-all duration-300 ${
-                      selectedDifficulty === difficulty.id
+                    className={`text-left p-6 rounded-2xl border-2 transition-all duration-300 ${selectedDifficulty === difficulty.id
                         ? `${difficulty.borderColor} ${difficulty.bgColor} scale-105 shadow-lg`
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-4">
                       <div className="text-3xl">{difficulty.icon}</div>

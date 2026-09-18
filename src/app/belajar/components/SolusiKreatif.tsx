@@ -375,11 +375,13 @@ export default function SolusiKreatif() {
         {/* Enhanced Modal - Responsive */}
         {showModal && selectedSolution !== null && (
           <div
-            className="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain"
+            data-lenis-prevent="true"
             onClick={closeModal}
           >
             <div
-              className="bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
+              className="bg-white rounded-3xl w-full max-w-6xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col overscroll-contain my-auto"
+              data-lenis-prevent="true"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Enhanced Modal Header */}
